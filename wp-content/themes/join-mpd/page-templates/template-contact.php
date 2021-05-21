@@ -61,7 +61,7 @@ if (have_posts()) : while (have_posts()) : the_post();
 
                 /* Headshot */
                 $hrimg = $hr['head_shot']; // Headshot
-                $hrh = wp_get_attachment_image( $hrimg, $size );
+                $hrh = wp_get_attachment_image($hrimg, $size);
 
                 $hrn = $hr['name']; // Name
                 $hrp = $hr['phone_number']; // Phone Number
@@ -76,7 +76,7 @@ if (have_posts()) : while (have_posts()) : the_post();
 
                 /* Headshot */
                 $mpdimg = $mpd['head_shot']; // Headshot
-                $mpdh = wp_get_attachment_image( $mpdimg, $size );
+                $mpdh = wp_get_attachment_image($mpdimg, $size);
 
                 $mpdn = $mpd['name']; // Name
                 $mpdp = $mpd['phone_number']; // Phone Number
@@ -91,7 +91,7 @@ if (have_posts()) : while (have_posts()) : the_post();
 
                 /* Headshot */
                 $pstimg = $pst['head_shot']; // Headshot
-                $psth = wp_get_attachment_image( $pstimg, $size );
+                $psth = wp_get_attachment_image($pstimg, $size);
 
                 $pstn = $pst['name']; // Name
                 $pstp = $pst['phone_number']; // Phone Number
@@ -113,7 +113,7 @@ if (have_posts()) : while (have_posts()) : the_post();
                 }
 
                 if ($hr) {
-                    if($hrh) {
+                    if ($hrh) {
                         echo $hrh;
                     }
                     echo '<p>';
@@ -135,7 +135,7 @@ if (have_posts()) : while (have_posts()) : the_post();
                 }
 
                 if ($mpd) {
-                    if($mpdh) {
+                    if ($mpdh) {
                         echo $mpdh;
                     }
                     echo '<p>';
@@ -157,7 +157,7 @@ if (have_posts()) : while (have_posts()) : the_post();
                 }
 
                 if ($pst) {
-                    if($psth) {
+                    if ($psth) {
                         echo $psth;
                     }
                     echo '<p>';
@@ -216,7 +216,7 @@ if (have_posts()) : while (have_posts()) : the_post();
             echo '<div class="col-md">';
             echo '<div id="leadership">';
             echo '<p><strong>' .$m. ',</strong> <em>City of Memphis Mayor</em></p>';
-            echo '<p><strong>' .$d. ',</strong> <em>Director of Police Services</em></p>';
+            echo '<p><strong>' .$d. ',</strong> <em>Police Chief</em></p>';
             echo '<p><strong>' .$t. ',</strong> <em>Training Commander</em></p>';
             echo '</div>'; // #leadership
             echo '</div>'; // .col-md
