@@ -26,6 +26,6 @@ if (have_posts()) : while (have_posts()) : the_post(); ?>
     </article>
 </main>
 
-
+<p>Hey, What in the world is going on here???</p>
 
 <?php endwhile; endif; get_footer(); ?>
