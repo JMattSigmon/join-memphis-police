@@ -1,0 +1,22 @@
+/*** 404 PAGE STYLES ***/
+
+#header-container {
+  &.error-page {
+    min-height: 550px;
+    h1 {
+      color: $wht;
+      text-shadow: $drop;
+      text-transform: uppercase;
+      @include font-size(50px);
+    }
+  }
+}
+#not-found {
+  text-align: center;
+  P {
+    font-weight: 700;
+    color: $dkblue;
+    @include font-size(20px);
+    font-family: $heading;
+  }
+}

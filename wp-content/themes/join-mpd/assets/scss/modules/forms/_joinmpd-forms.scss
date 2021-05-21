@@ -1,0 +1,77 @@
+.gform_wrapper {
+  .joinmpd-form {
+    background: $wht;
+    padding: 14px 0 14px 16px;
+    margin: 30px auto;
+    box-shadow: 0 0 20px 10px $blk20;
+    border: 1px solid $blk70;
+    @include breakpoint(md) {
+      padding-right: 14px;
+    }
+
+    /*General Style Overrides */
+    input,
+    textarea {
+      border: 1px solid $blk10;
+      background: $gray;
+      font-family: $heading;
+      font-weight: 600;
+      color: $blk;
+      text-shadow: $letterpress;
+      text-transform: uppercase;
+      max-width: 100%;
+      &:focus {
+        background: $blue;
+        color: $wht;
+        text-shadow: $drop;
+        border: 1px solid $blk50;
+        &::-webkit-input-placeholder {
+          color: $wht;
+        }
+      }
+      &::-webkit-input-placeholder {
+        color: darken($gray, 20%);
+        text-transform: uppercase;
+      }
+    }
+    textarea {
+      text-transform: inherit;
+    }
+
+    .gform_footer {
+      padding: 10px 16px 10px 0;
+      margin: 0;
+      @include breakpoint(md) {
+        padding-right: 0;
+      }
+      input {
+        &[type='submit'] {
+          background-color: $blue;
+          width: 100%;
+          padding: 15px;
+          color: $wht;
+          text-shadow: $drop;
+          text-transform: uppercase;
+          @include font-size(20px, 100%);
+          transition: $smooth;
+          &:hover {
+            background-color: $red;
+            cursor: pointer;
+            transition: $smooth;
+          }
+        }
+      }
+    }
+
+    /* Remove lower labels */
+    .field_sublabel_below {
+      .ginput_complex {
+        &.ginput_container {
+          label {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,420 @@
+//----------------------------------
+// Generic Typography Styles
+//----------------------------------
+
+p {
+  font-family: $body;
+  @include font-size(16px);
+  &:empty {
+    display: none;
+  }
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $heading;
+  font-weight: 800;
+}
+h6 {
+  @include font-size(22px);
+}
+h5 {
+  @include font-size(24px);
+}
+h4 {
+  @include font-size(26px);
+}
+h3 {
+  @include font-size(28px);
+}
+h2 {
+  @include font-size(30px);
+}
+h1 {
+  @include font-size(32px);
+}
+
+//----------------------------------
+// List Styles
+//----------------------------------
+
+ul,
+ol {
+  li {
+    font-family: $body;
+    margin: 5px 0;
+  }
+
+  // Different List styles
+  &.box {
+    margin: 30px 0;
+    padding: 30px;
+    background: none $blk05;
+  }
+
+  // Checkmark List
+  &.check {
+    margin: 30px 0;
+    padding: 0;
+    &.small-font {
+      li {
+        @include font-size(16px, 140%);
+      }
+    }
+    li {
+      list-style-type: none;
+      color: inherit;
+      font-weight: 700;
+      @include font-size(20px);
+      font-family: $heading;
+      &:before {
+        font-family: 'Font Awesome 5 Free'; /* updated font-family */
+        font-weight: 400; /* regular style/weight */
+        content: '\f14a';
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+//----------------------------------
+// Generic Link Styles
+//----------------------------------
+
+a {
+  font-family: $body;
+  transition: $smooth;
+  color: $blue;
+  &:link,
+  &:visited {
+    &:hover {
+      transition: $smooth;
+      color: $dkblue;
+    }
+  }
+}
+
+//-------------
+// Image Class
+//-------------
+
+.frame {
+  img {
+    padding: 15px;
+    background: $wht;
+    border: 1px solid $blk10;
+  }
+}
+
+//---------------------
+// Bootstrap Button
+//---------------------
+
+.btn {
+  border-radius: 0;
+  font-family: $heading;
+  font-weight: 800;
+  @include font-size(20px, 100%);
+  padding: 0.5rem 1rem;
+
+  // Primary
+  &.btn-primary {
+    background-color: $dkblue;
+    border: 1px solid $wht20;
+    text-shadow: $drop;
+    color: $wht;
+    &:hover {
+      background-color: $wht;
+      color: $dkblue;
+      text-shadow: $letterpress;
+      border: 1px solid $dkblue;
+    }
+    &.btn-red {
+      background-color: $red;
+      &:hover {
+        background-color: $wht;
+      }
+    }
+    &.btn-blue {
+      background-color: $blue;
+      &:hover {
+        background-color: $wht;
+      }
+    }
+    &.btn-black {
+      background-color: $blk;
+      &:hover {
+        background-color: $wht;
+      }
+    }
+  }
+
+  // Secondary
+  &.btn-secondary {
+    background-color: $wht;
+    &:link,
+    &:visited {
+      color: $dkblue;
+    }
+
+    &:hover {
+      background-color: $dkblue;
+      color: $wht;
+      text-shadow: $drop;
+      border: 1px solid $wht20;
+    }
+  }
+}
+
+//==================
+// Global Classes
+//==================
+
+//---------------
+// Text Sizes
+//---------------
+
+// Big Heading
+.big-heading {
+  @include font-size(50px);
+  @include breakpoint(md) {
+    @include font-size(30px);
+  }
+}
+
+.md-heading {
+  @include font-size(38px);
+}
+
+// Small Heading {
+.small-heading {
+  @include font-size(18px);
+}
+
+// Dropshadow
+.drop {
+  text-shadow: $drop;
+}
+
+// Letterpress
+.letterpress {
+  text-shadow: $letterpress;
+}
+
+//-------------
+// Text Colors
+//-------------
+
+// Dark Blue
+.text-dkblue {
+  color: $dkblue;
+}
+//Blue {
+.text-blue {
+  color: $blue;
+}
+// Red
+.text-red {
+  color: $red;
+}
+// Gray
+.text-gray {
+  color: $gray;
+}
+
+// White
+.text-white {
+  color: $wht;
+}
+
+//-------------
+// Other Text
+//-------------
+
+.text-up {
+  text-transform: uppercase;
+}
+
+//-------------
+// BG Colors
+//-------------
+
+// Dark Blue
+.bg-dkblue {
+  background-color: $dkblue;
+}
+// Red
+.bg-red {
+  background-color: $red;
+}
+// Gray
+.bg-gray {
+  background-color: $gray;
+}
+.bg-white {
+  background-color: $wht;
+}
+.bg-white50 {
+  background-color: $wht50;
+}
+
+//-------------
+// Borders
+//-------------
+
+// Dark Blue
+.border-dkblue {
+  border: 1px solid $dkblue;
+}
+// Blue
+.border-blue {
+  border: 1px solid $blue;
+}
+// Red
+.border-red {
+  border: 1px solid $red;
+}
+// Gray
+.border-gray {
+  border: 1px solid $gray;
+}
+.border-white {
+  border: 1px solid $wht;
+}
+.bg-white50 {
+  background-color: $wht50;
+}
+
+//----------
+// Effects
+//----------
+
+.box-shadow {
+  padding: 30px;
+  background: none inherit;
+  box-shadow: 0 0 10px 10px $blk20, inset 0 0 10px 10px $blu20;
+  border: 1px solid lighten($dkblue, 30%);
+}
+
+.dark-shadow {
+  padding: 30px;
+  background: none $wht;
+  box-shadow: inset 0 0 10px 10px $blu20;
+}
+
+//--------------------
+// Global Containers
+//--------------------
+
+// Color all text Dark Blue
+.dkblue-cta {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    color: $dkblue;
+  }
+  ul {
+    li {
+      color: $dkblue;
+    }
+  }
+}
+
+.info-box {
+  background: none $blk05;
+}
+
+//-------------
+// Opacity BGs
+//-------------
+
+// White
+.bg-white05 {
+  background-color: $wht05;
+}
+.bg-white10 {
+  background-color: $wht10;
+}
+.bg-white20 {
+  background-color: $wht20;
+}
+.bg-white30 {
+  background-color: $wht30;
+}
+.bg-white40 {
+  background-color: $wht40;
+}
+.bg-white50 {
+  background-color: $wht50;
+}
+
+// Black
+.bg-blk05 {
+  background-color: $blk05;
+}
+.bg-blk10 {
+  background-color: $blk10;
+}
+.bg-blk20 {
+  background-color: $blk20;
+}
+.bg-blk30 {
+  background-color: $blk30;
+}
+.bg-blk40 {
+  background-color: $blk40;
+}
+.bg-blk50 {
+  background-color: $blk50;
+}
+
+//-----------
+// Borders
+//-----------
+
+// White
+.border-white05 {
+  border: 1px solid $wht05;
+}
+.border-white10 {
+  border: 1px solid $wht10;
+}
+.border-white20 {
+  border: 1px solid $wht20;
+}
+.border-white30 {
+  border: 1px solid $wht30;
+}
+.border-white40 {
+  border: 1px solid $wht40;
+}
+.border-white50 {
+  border: 1px solid $wht50;
+}
+
+// Black
+.border-blk05 {
+  border: 1px solid $blk05;
+}
+.border-blk10 {
+  border: 1px solid $blk10;
+}
+.border-blk20 {
+  border: 1px solid $blk20;
+}
+.border-blk30 {
+  border: 1px solid $blk30;
+}
+.border-blk40 {
+  border: 1px solid $blk40;
+}
+.border-blk50 {
+  border: 1px solid $blk50;
+}

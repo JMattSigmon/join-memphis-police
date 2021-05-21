@@ -1,0 +1,53 @@
+.gform_wrapper {
+  .ginput_container {
+    input,
+    textarea {
+      margin: 5px 0;
+      padding: 10px !important;
+      @include font-size(16px !important);
+      border-radius: 0;
+      color: #fff;
+      transition: $smooth;
+      &:focus {
+        transition: $smooth;
+        outline: none !important;
+      }
+    }
+    select {
+    }
+  }
+  .top_label {
+    .gfield_label {
+      display: none !important;
+    }
+  }
+  .ginput_complex {
+    label {
+      margin: 0 0 5px 0;
+    }
+  }
+  .gform_footer {
+    input[type="submit"] {
+    }
+  }
+  button {
+    background: none transparent;
+    border: none;
+  }
+  p,
+  br {
+    display: none;
+  }
+}
+.gform_wrapper .top_label textarea.textarea,
+.gform_wrapper .top_label input.large,
+.gform_wrapper .top_label select.large,
+.gform_wrapper .ginput_complex .ginput_right input[type="text"],
+.gform_wrapper .ginput_complex .ginput_full input[type="text"] {
+  width: 100% !important;
+}
+
+.gform_wrapper input::-webkit-input-placeholder,
+.gform_wrapper textarea::-webkit-input-placeholder {
+  color: $wht;
+}

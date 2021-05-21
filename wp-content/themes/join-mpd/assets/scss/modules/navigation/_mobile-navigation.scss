@@ -1,0 +1,143 @@
+//----------------------------------
+// Mobile Navigation Styles
+//----------------------------------
+body {
+  &.home {
+    #mobile-navbar {
+      position: relative;
+      z-index: 2;
+    }
+  }
+}
+/* Mobile Navbar & Toggler */
+#mobile-navbar {
+  padding: 5px 15px;
+  background: none $blue;
+  box-shadow: inset 0 0 30px 10px darken($blue, 20%);
+  border-bottom: 1px solid $dkblue;
+  border-top: 1px solid $dkblue;
+  @include flex-row(center, space-between);
+  .hamburger-inner {
+    background-color: $wht;
+    border-radius: 0;
+    box-shadow: 0 2px 3px 3px $blk10;
+    &:before,
+    &:after {
+      background-color: $wht;
+      border-radius: 0;
+      box-shadow: 0 2px 3px 3px $blk10;
+    }
+  }
+}
+
+/* Mobile Logo */
+#mobile-logo {
+  img {
+    max-height: 50px;
+    width: auto;
+  }
+}
+
+//---------------------------------
+// Mobile Off Canvas Menu Styles
+//---------------------------------
+
+/* Off Canvas Menu */
+#mobile-menu {
+  background: none $blue;
+  z-index: 3;
+
+  /* Hide menu before initializing to prevent FOUC */
+  &:not(.mm-menu) {
+    display: none;
+  }
+
+  /* Title Bar */
+  a {
+    &:not([href]):not([tabindex]) {
+      color: $wht;
+    }
+    &.mm-title {
+      font-family: $heading;
+      font-weight: 800;
+      color: $wht;
+      background-color: $red;
+      width: 100%;
+      text-shadow: $drop;
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    &.mm-next {
+      &:after {
+        border-color: $dkblue;
+      }
+    }
+  }
+
+  .mm-btn {
+    &:before {
+      border-color: $wht;
+    }
+  }
+
+  .mm-navbar {
+    padding: 0;
+  }
+
+  /* Menu Panels */
+  .mm-panels {
+    top: 75px;
+  }
+
+  /* Mobile Menu */
+  ul {
+    text-align: left;
+    li {
+      a {
+        transition: $smooth;
+        font-family: $heading;
+        font-weight: 800;
+        @include font-size(22px, 100%);
+        text-shadow: $letterpress;
+        background-color: $gray;
+        color: $dkblue;
+        &:hover {
+          transition: $smooth;
+        }
+      }
+    }
+  }
+}
+
+/* Mobile Title Bar */
+.mm-navbars-top {
+  padding: 5px;
+  height: auto;
+  background: $dkblue;
+  .mm-navbar {
+    height: 100%;
+    @include flex-row(center, space-between);
+    .hamburger {
+      width: auto;
+    }
+    h3 {
+      a {
+        color: $wht;
+        text-shadow: $drop;
+        font-family: $heading;
+      }
+    }
+
+    .hamburger-inner {
+      background-color: $wht;
+      border-radius: 0;
+      box-shadow: none;
+      &:before,
+      &:after {
+        background-color: $wht;
+        border-radius: 0;
+        box-shadow: none;
+      }
+    }
+  }
+}

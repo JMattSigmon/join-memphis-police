@@ -1,0 +1,293 @@
+//========================================
+// MIXINS
+//========================================
+
+//---------------------------------------
+// Responsive Breakpoints
+//---------------------------------------
+
+@mixin breakpoint($min: 0, $max: 0) {
+  $type: type-of($min);
+  // These match Bootstrap's breakpoints
+  @if $type == string {
+    @if $min == xs {
+      @media (max-width: 575px) {
+        @content;
+      } // Mobile Devices
+    } @else if $min == sm {
+      @media (max-width: 767px) {
+        @content;
+      } // Tablet Devices
+    } @else if $min == md {
+      @media (max-width: 991px) {
+        @content;
+      } // Desktops
+    } @else if $min == lg {
+      @media (max-width: 1199px) {
+        @content;
+      } // Widescreen Desktops
+    }
+
+    // Otherwise pass a warning to the compiler as to the appropriate options
+    @else {
+      @warn "The breakpoint mixin supports the following attributes: xs, sm, md, lg";
+    }
+  } @else if $type == number {
+    // Allow for custom parameters for min and max size
+    $query: 'all' !default;
+    @if $min != 0 and $max != 0 {
+      $query: '(min-width: #{$min}) and (max-width: #{$max})';
+    } // set both min and max
+    @else if $min != 0 and $max == 0 {
+      $query: '(min-width: #{$min})';
+    } // set just min
+    @else if $min == 0 and $max != 0 {
+      $query: '(max-width: #{$max})';
+    } // set just max
+    @media #{$query} {
+      @content;
+    }
+  }
+}
+
+//---------------------------------------
+// Convert Pixels to REMS for Typography
+//---------------------------------------
+
+$default-line-height: 1.43 !default;
+
+@function calculateRem($size) {
+  $remSize: $size / 16px;
+  @return #{$remSize}rem;
+}
+@mixin font-size($size, $lineHeight: $default-line-height) {
+  font-size: $size; //Fallback in px
+  font-size: calculateRem($size);
+  line-height: $lineHeight;
+}
+@mixin letter-spacing($size) {
+  letter-spacing: $size;
+  letter-spacing: calculateRem($size);
+}
+
+//---------------------------------
+// Buttons & Stuff
+//---------------------------------
+
+/**
+ * Main Button Mixin
+ *
+ * This mixin controls all the options for the buttons
+ * in this theme. Example basic button with simple styling:
+ *
+ * @include main-button($blue, $wht, 13px, .5rem, .5rem, null, null, 1, 1);
+ *
+ * The null options are for the Arrow & Box Shadow Styles
+ *
+ */
+
+@mixin custom-button($txt, $bg) {
+  width: auto;
+  height: auto;
+  text-align: center;
+  display: inline-block;
+  padding: 15px;
+  @include font-size(16px, 100%);
+  @include letter-spacing(0.25px);
+  font-family: $heading;
+  transition: $smooth;
+  color: $txt;
+  text-transform: uppercase;
+  font-weight: 700;
+  background-color: $bg;
+  border: 1px solid transparent;
+  &:hover {
+    text-decoration: none;
+    transition: $smooth;
+    background-color: $txt;
+    color: $bg;
+    border: 1px solid $bg;
+  }
+}
+
+@mixin red-button {
+  width: auto;
+  height: auto;
+  text-align: center;
+  display: inline-block;
+  padding: 25px 15px;
+  transition: $smooth;
+  @include font-size(16px, 100%);
+  @include letter-spacing(0.25px);
+  background-color: $red;
+  border: 3px solid $wht;
+  color: $wht;
+  font-weight: 700;
+  text-shadow: $drop;
+  font-family: $heading;
+  &:hover {
+    text-decoration: none;
+    transition: $smooth;
+    border: 3px solid $red;
+    background-color: $wht;
+    color: $red;
+    text-shadow: none;
+  }
+}
+
+@mixin white-button {
+  width: auto;
+  height: auto;
+  text-align: center;
+  display: inline-block;
+  padding: 25px 15px;
+  transition: $smooth;
+  @include font-size(16px, 100%);
+  @include letter-spacing(0.25px);
+  background-color: $wht;
+  border: 3px solid $red;
+  color: $red;
+  font-weight: 700;
+  text-shadow: none;
+  font-family: $heading;
+  &:hover {
+    text-decoration: none;
+    transition: $smooth;
+    border: 3px solid $wht;
+    background-color: $blue;
+    color: $wht;
+    text-shadow: $drop;
+  }
+}
+
+@mixin blue-button {
+  width: auto;
+  height: auto;
+  text-align: center;
+  display: inline-block;
+  padding: 25px 15px;
+  transition: $smooth;
+  @include font-size(16px, 100%);
+  @include letter-spacing(0.25px);
+  background-color: $blue;
+  border: 3px solid $wht;
+  color: $wht;
+  font-weight: 700;
+  text-shadow: $drop;
+  font-family: $heading;
+  &:hover {
+    text-decoration: none;
+    transition: $smooth;
+    border: 3px solid $wht;
+    background-color: $red;
+  }
+}
+
+@mixin black-button {
+  width: auto;
+  height: auto;
+  text-align: center;
+  display: inline-block;
+  padding: 25px 15px;
+  transition: $smooth;
+  @include font-size(16px, 100%);
+  @include letter-spacing(0.25px);
+  background-color: $blk;
+  border: 3px solid $blk;
+  color: $wht;
+  font-weight: 700;
+  text-shadow: $drop;
+  font-family: $heading;
+  &:hover {
+    text-decoration: none;
+    transition: $smooth;
+    border: 3px solid $blk;
+    background-color: $wht;
+    color: $blk;
+    text-shadow: none;
+  }
+}
+
+//==============================
+// Miscellaneous Mixins
+//==============================
+
+/* Controls the site's SVG logos */
+@mixin svg-logo($width, $fill) {
+  width: 100%;
+  max-width: $width;
+  height: 100%;
+  fill: $fill;
+  g {
+    fill: $fill;
+  }
+}
+
+/* Easy Image Hover */
+@mixin easy-image-hover($effect, $opacity) {
+  transition: $effect;
+  &:hover {
+    transition: $effect;
+    opacity: $opacity;
+  }
+}
+
+/* Flexbox Quickies */
+@mixin flex-row($align, $justify) {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: $align;
+  justify-content: $justify;
+  width: 100%;
+}
+
+@mixin flex-row-reverse($align, $justify) {
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  align-items: $align;
+  justify-content: $justify;
+  width: 100%;
+}
+
+@mixin flex-row-wrap($align, $justify) {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: $align;
+  justify-content: $justify;
+  width: 100%;
+}
+
+@mixin flex-column($align, $justify) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
+  flex-flow: column nowrap;
+}
+
+//------------------------
+// Gradients w/ BG Image
+//------------------------
+
+@mixin linear-gradient-image($image, $fromColor, $toColor) {
+  background: $image, $toColor; /* Fallback Color */
+  background: $image,
+    -webkit-gradient(linear, left top, left bottom, from($fromColor), to($toColor)); /* Saf4+, Chrome */
+  background: $image, -webkit-linear-gradient(top, $fromColor, $toColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
+  background: $image, -moz-linear-gradient(top, $fromColor, $toColor); /* FF3.6 */
+  background: $image, -ms-linear-gradient(top, $fromColor, $toColor); /* IE10 */
+  background: $image, -o-linear-gradient(top, $fromColor, $toColor); /* Opera 11.10+ */
+  background: $image, linear-gradient(top, $fromColor, $toColor);
+}
+
+//---------------
+// Video Hero
+//---------------
+
+@mixin video-hero {
+  object-fit: cover;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+}

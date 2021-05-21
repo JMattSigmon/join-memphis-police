@@ -1,0 +1,77 @@
+//----------------------------------
+// Desktop Navigation Styles
+//----------------------------------
+
+.desktop-nav {
+  position: relative;
+  z-index: 2;
+  ul {
+    li {
+      margin: 0 5px;
+      a {
+        transition: $smooth;
+        color: $wht;
+        text-shadow: $drop;
+        font-family: $heading;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 15px;
+        display: block;
+        @include font-size(16px, 100%);
+        border-bottom: 2px solid transparent;
+        &:hover {
+          transition: $smooth;
+          background-color: $blue;
+          color: $wht;
+        }
+        &.active {
+          border-bottom: 2px solid $red;
+        }
+
+        &.dropdown-item {
+          display: inline-block;
+          width: 100%;
+          padding: 0;
+          border-radius: 0;
+          border: none;
+          text-align: center;
+          &:hover {
+          }
+          &.active {
+            background: none transparent;
+            color: $blue;
+            border: none;
+            border-bottom: 1px solid transparent;
+            &:hover {
+              border-bottom: 1px solid $blue;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* Dropdowns */
+  .dropdown:hover > .dropdown-menu {
+    @include flex-column(center, center);
+    padding: 0;
+    border-radius: 0;
+    margin-top: -1px;
+    //width: 100%;
+    border: 1px solid $wht70;
+    box-shadow: 0 0 10px 10px $blk30;
+    a {
+      padding: 10px;
+      color: $wht;
+      background: none $blue;
+      text-align: left;
+      border: none;
+      &:hover {
+        background: none $gray;
+        color: $blk;
+        text-shadow: $letterpress;
+        border: none;
+      }
+    }
+  }
+}

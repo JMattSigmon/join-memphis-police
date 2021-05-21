@@ -1,0 +1,64 @@
+{
+    "key": "group_5fbd6c8a1160a",
+    "title": "Block: The Hiring Process",
+    "fields": [
+        {
+            "key": "field_5fbd6c94a355e",
+            "label": "Steps",
+            "name": "steps",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "collapsed": "field_5fbd6f0b36340",
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "Add Step",
+            "sub_fields": [
+                {
+                    "key": "field_5fbd6f0b36340",
+                    "label": "Step",
+                    "name": "step",
+                    "type": "wysiwyg",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "full",
+                    "media_upload": 1,
+                    "delay": 0
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/hiring-process"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1606256547
+}

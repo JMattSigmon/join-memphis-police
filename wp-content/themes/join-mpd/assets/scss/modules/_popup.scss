@@ -1,0 +1,77 @@
+//=====================
+// Popup Styles
+//=====================
+
+/* Popup Container */
+.memphis-modal {
+  width: 100%;
+  height: 100vh;
+  background: $blk50;
+  align-items: center;
+  justify-content: space-between;
+  transition: $smooth;
+  .modal-dialog {
+    @include breakpoint(sm) {
+      margin: 0 auto;
+    }
+  }
+  .fa-times {
+    align-self: flex-end;
+    margin-bottom: auto;
+    @include font-size(36px, 100%);
+    color: $dkblue;
+    transition: $smooth;
+    text-shadow: $drop;
+    &:hover {
+      cursor: pointer;
+      transition: $smooth;
+      color: $blue;
+    }
+    
+  }
+  .modal-header {
+    padding: 15px;
+    border: none;
+    @include breakpoint(sm) {
+      padding: 30px;
+    }
+    h3 {
+      @include font-size(36px, 120%);
+      text-align: center;
+      margin-bottom: 15px;
+      color: $dkblue;
+      @include breakpoint(sm) {
+        @include font-size(24px, 130%);
+      }
+    }
+  }
+  .modal-body {
+    text-align: center;
+    padding: 0;
+    p {
+      @include font-size(16px, 150%);
+      &:first-of-type {
+        @include font-size(22px, 150%);
+        @include breakpoint(sm) {
+          @include font-size(16px, 150%);
+        }
+      }
+    }
+    a {
+      color: $red;
+      font-weight: 700;
+    }
+  }
+  .modal-footer {
+    border: none;
+    padding: 0;
+  }
+}
+
+/* Popup Itself */
+#popup-info {
+  width: 100%;
+  background: $wht;
+  border-radius: 0;
+  @include flex-column(center, center);
+}

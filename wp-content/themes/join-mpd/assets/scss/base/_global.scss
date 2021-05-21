@@ -1,0 +1,158 @@
+//================
+// Global Styles
+//================
+
+body,
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+
+/* Full width Videos for Block Editor */
+.wp-video {
+  width: 100% !important;
+}
+.wp-video video {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* YouTube */
+.wp-block-embed-youtube {
+  padding: 30px 15px;
+}
+
+.wp-block-embed {
+  text-align: center;
+  iframe {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 450px;
+    margin: 0 auto;
+    padding: 15px;
+    border: 1px solid $blu20;
+  }
+}
+
+/**
+ *  Global Hide & Show Classes
+ */
+
+.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transition: $smooth;
+}
+.fade-in {
+  opacity: 1;
+  visibility: visible;
+  transition: $smooth;
+}
+
+/*
+ *
+ * Slide in Stuff
+ *
+ */
+
+// Spin Keyframe
+@keyframes spin {
+  0% {
+    transform: rotateZ(0);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+// Slide Left
+@keyframes slide-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-2000px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(30px);
+  }
+  80% {
+    transform: translateX(-60px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+// Slide Right
+@keyframes slide-right {
+  0% {
+    opacity: 0;
+    transform: translateX(2000px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(30px);
+  }
+  80% {
+    transform: translateX(-60px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-1000px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(30px);
+  }
+  80% {
+    transform: translateY(-60px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/** TODO: Refine this !! **/
+
+/* Basic slide classes */
+.slide-it {
+  @include breakpoint(769px, 999999999px) {
+    opacity: 0;
+    visibility: hidden;
+    &.slide-left {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+/* Basic slide classes */
+.slide-it-right {
+  @include breakpoint(769px, 999999999px) {
+    opacity: 0;
+    visibility: hidden;
+    &.slide-right {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+.slide-left {
+  animation: slide-left 0.5s ease-in 0s forwards;
+}
+.slide-right {
+  animation: slide-right 0.5s ease-in 0s forwards;
+}
+.slide-down {
+  animation: slide-down 0.5s ease-in 0s forwards;
+}

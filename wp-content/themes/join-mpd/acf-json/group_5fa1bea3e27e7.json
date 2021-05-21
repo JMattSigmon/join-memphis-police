@@ -1,0 +1,396 @@
+{
+    "key": "group_5fa1bea3e27e7",
+    "title": "Post Type: Benefit",
+    "fields": [
+        {
+            "key": "field_5fa1f8eb02a31",
+            "label": "Benefit Information",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5fa1f90a02a32",
+            "label": "Benefit Icon",
+            "name": "benefit_icon",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "preview_size": "thumbnail",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_5fa1f97d02a33",
+            "label": "Brief Description",
+            "name": "brief_description",
+            "type": "textarea",
+            "instructions": "A brief description of this benefit.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": "",
+            "rows": 3,
+            "new_lines": ""
+        },
+        {
+            "key": "field_5fa1f8d402a30",
+            "label": "Benefit Layout",
+            "name": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_5fa1bf2e80eb2",
+            "label": "Benefit Layout",
+            "name": "benefit_layout",
+            "type": "flexible_content",
+            "instructions": "Create the different sections of this particular Benefit and control the order of it's display.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layouts": {
+                "layout_5fa45cf608e73": {
+                    "key": "layout_5fa45cf608e73",
+                    "name": "benefits",
+                    "label": "Benefits",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_5fa45d0108e74",
+                            "label": "Benefits",
+                            "name": "benefits",
+                            "type": "flexible_content",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layouts": {
+                                "layout_5fa45d0e207b2": {
+                                    "key": "layout_5fa45d0e207b2",
+                                    "name": "block_editor",
+                                    "label": "Block Editor",
+                                    "display": "block",
+                                    "sub_fields": [
+                                        {
+                                            "key": "field_5fa1d19b5fb0d",
+                                            "label": "Block Editor Placement",
+                                            "name": "",
+                                            "type": "message",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "message": "This content type simply places the contents of the block editor into the layout.  Once complete you can move its content within the Benefit's layout.",
+                                            "new_lines": "",
+                                            "esc_html": 0
+                                        },
+                                        {
+                                            "key": "field_5fa567efc8c58",
+                                            "label": "CSS Class",
+                                            "name": "css_class",
+                                            "type": "text",
+                                            "instructions": "Add a CSS class to target this specific section of block editor content.",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "",
+                                            "placeholder": "",
+                                            "prepend": "",
+                                            "append": "",
+                                            "maxlength": ""
+                                        }
+                                    ],
+                                    "min": "0",
+                                    "max": "1"
+                                },
+                                "layout_5fa45db108e76": {
+                                    "key": "layout_5fa45db108e76",
+                                    "name": "wsywig",
+                                    "label": "WSYWIG",
+                                    "display": "block",
+                                    "sub_fields": [
+                                        {
+                                            "key": "field_5fa1fd0b39ac0",
+                                            "label": "WSYWIG",
+                                            "name": "wsywig",
+                                            "type": "wysiwyg",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "",
+                                            "tabs": "all",
+                                            "toolbar": "full",
+                                            "media_upload": 1,
+                                            "delay": 0
+                                        }
+                                    ],
+                                    "min": "",
+                                    "max": ""
+                                },
+                                "layout_5fa45d3808e75": {
+                                    "key": "layout_5fa45d3808e75",
+                                    "name": "full_width_cta",
+                                    "label": "Full Width CTA",
+                                    "display": "block",
+                                    "sub_fields": [
+                                        {
+                                            "key": "field_5fa200e9e0b79",
+                                            "label": "Heading",
+                                            "name": "heading",
+                                            "type": "text",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "Here is a Sample Heading",
+                                            "placeholder": "",
+                                            "prepend": "",
+                                            "append": "",
+                                            "maxlength": ""
+                                        },
+                                        {
+                                            "key": "field_5fa2010ee0b7a",
+                                            "label": "Content",
+                                            "name": "content",
+                                            "type": "wysiwyg",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "<p>Here is some sample content to get us started.  Obviously this will be replaced by actual content.  Here is some sample content to get us started.  Obviously this will be replaced by actual content.  Here is some sample content to get us started.  Obviously this will be replaced by actual content.  Here is some sample content to get us started.  Obviously this will be replaced by actual content.  Here is some sample content to get us started.  Obviously this will be replaced by actual content. <\/p>",
+                                            "tabs": "text",
+                                            "toolbar": "full",
+                                            "media_upload": 1,
+                                            "delay": 0
+                                        },
+                                        {
+                                            "key": "field_5fa2012ae0b7b",
+                                            "label": "BG Color or Image?",
+                                            "name": "bg_color_or_image",
+                                            "type": "button_group",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "choices": {
+                                                "image": "Image",
+                                                "color": "Color"
+                                            },
+                                            "allow_null": 0,
+                                            "default_value": "color",
+                                            "layout": "horizontal",
+                                            "return_format": "value"
+                                        },
+                                        {
+                                            "key": "field_5fa2030fe0b7d",
+                                            "label": "BG Image",
+                                            "name": "bg_image",
+                                            "type": "image",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": [
+                                                [
+                                                    {
+                                                        "field": "field_5fa2012ae0b7b",
+                                                        "operator": "==",
+                                                        "value": "image"
+                                                    }
+                                                ]
+                                            ],
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "return_format": "url",
+                                            "preview_size": "medium",
+                                            "library": "all",
+                                            "min_width": "",
+                                            "min_height": "",
+                                            "min_size": "",
+                                            "max_width": "",
+                                            "max_height": "",
+                                            "max_size": "",
+                                            "mime_types": ""
+                                        },
+                                        {
+                                            "key": "field_5fa2018be0b7c",
+                                            "label": "BG Color",
+                                            "name": "bg_color",
+                                            "type": "color_picker",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": [
+                                                [
+                                                    {
+                                                        "field": "field_5fa2012ae0b7b",
+                                                        "operator": "==",
+                                                        "value": "color"
+                                                    }
+                                                ]
+                                            ],
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": ""
+                                        },
+                                        {
+                                            "key": "field_5fa5c8a897e43",
+                                            "label": "Text Color",
+                                            "name": "text_color",
+                                            "type": "color_picker",
+                                            "instructions": "",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": ""
+                                        },
+                                        {
+                                            "key": "field_5fa20357e0b7e",
+                                            "label": "Button",
+                                            "name": "button",
+                                            "type": "link",
+                                            "instructions": "Add a button if you want.",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "return_format": "array"
+                                        },
+                                        {
+                                            "key": "field_5fa488241733c",
+                                            "label": "CSS Class",
+                                            "name": "css_class",
+                                            "type": "text",
+                                            "instructions": "Add an optional CSS class to target with CSS (duh)",
+                                            "required": 0,
+                                            "conditional_logic": 0,
+                                            "wrapper": {
+                                                "width": "",
+                                                "class": "",
+                                                "id": ""
+                                            },
+                                            "default_value": "",
+                                            "placeholder": "",
+                                            "prepend": "",
+                                            "append": "",
+                                            "maxlength": ""
+                                        }
+                                    ],
+                                    "min": "",
+                                    "max": ""
+                                }
+                            },
+                            "button_label": "Add Benefit",
+                            "min": "",
+                            "max": ""
+                        }
+                    ],
+                    "min": "0",
+                    "max": "1"
+                }
+            },
+            "button_label": "Add Content",
+            "min": "",
+            "max": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "benefit"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1605840481
+}

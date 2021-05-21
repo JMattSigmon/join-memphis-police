@@ -1,0 +1,67 @@
+//==================
+// Header Styles
+//==================
+
+/* Hero styles */
+#header-container {
+  background: url(../images/city-of-memphis.jpg) $blue no-repeat 50% 50% / cover;
+  padding-bottom: 60px;
+  @include flex-column(center, flex-start);
+  &.tall-hero {
+    min-height: 70vh;
+  }
+  &.short-hero {
+    .page-hero {
+      min-height: auto;
+      padding: 15px 0;
+    }
+  }
+}
+#header-info-contain {
+  @include flex-row(flex-start, space-between);
+  position: relative;
+  z-index: 3;
+  /* fix bug for drop down menu getting stuck behind the title container */
+}
+
+#logo,
+#logo-right {
+  margin-top: 15px;
+  position: relative;
+  z-index: 2;
+  img {
+    max-width: 150px;
+  }
+}
+
+/* Default Hero */
+.page-hero {
+  height: 100%;
+  @include flex-row(center, center);
+  z-index: 2;
+  position: relative;
+  text-transform: uppercase;
+  min-height: 250px;
+  margin: auto 0;
+  &.video-header {
+    min-height: 70vh;
+  }
+  h1 {
+    color: $wht;
+    @include font-size(50px, 100%);
+    text-shadow: $drop;
+    text-align: center;
+  }
+}
+
+/* Video Hero */
+#inner-video-hero {
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  width: 100vw;
+  max-width: 100%;
+  video {
+    @include video-hero;
+  }
+}
