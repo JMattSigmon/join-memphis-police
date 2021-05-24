@@ -8,6 +8,9 @@
     @include breakpoint(md) {
       padding-right: 14px;
     }
+    &.no-shadow {
+      box-shadow: none;
+    }
 
     /*General Style Overrides */
     input,
@@ -38,6 +41,10 @@
       text-transform: inherit;
     }
 
+    label {
+      color: $blk;
+    }
+
     .gform_footer {
       padding: 10px 16px 10px 0;
       margin: 0;
@@ -58,17 +65,6 @@
             background-color: $red;
             cursor: pointer;
             transition: $smooth;
-          }
-        }
-      }
-    }
-
-    /* Remove lower labels */
-    .field_sublabel_below {
-      .ginput_complex {
-        &.ginput_container {
-          label {
-            display: none;
           }
         }
       }

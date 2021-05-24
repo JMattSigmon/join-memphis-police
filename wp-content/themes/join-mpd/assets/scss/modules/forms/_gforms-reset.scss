@@ -13,21 +13,15 @@
         outline: none !important;
       }
     }
-    select {
-    }
   }
-  .top_label {
-    .gfield_label {
-      display: none !important;
-    }
-  }
+
   .ginput_complex {
     label {
       margin: 0 0 5px 0;
     }
   }
   .gform_footer {
-    input[type="submit"] {
+    input[type='submit'] {
     }
   }
   button {
@@ -42,8 +36,8 @@
 .gform_wrapper .top_label textarea.textarea,
 .gform_wrapper .top_label input.large,
 .gform_wrapper .top_label select.large,
-.gform_wrapper .ginput_complex .ginput_right input[type="text"],
-.gform_wrapper .ginput_complex .ginput_full input[type="text"] {
+.gform_wrapper .ginput_complex .ginput_right input[type='text'],
+.gform_wrapper .ginput_complex .ginput_full input[type='text'] {
   width: 100% !important;
 }
 
