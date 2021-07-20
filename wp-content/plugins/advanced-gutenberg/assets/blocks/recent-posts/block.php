@@ -55,7 +55,7 @@ HTML;
 }
 
 /**
- * Render content for Recent Posts block
+ * Render content for Content Display block
  *
  * @param array $attributes Attributes of the block
  *
@@ -73,7 +73,7 @@ function advgbRenderBlockRecentPosts($attributes)
 		$categories = $attributes['category'];
 	}
 
-	$tax_query = null;
+	$tax_query = [];
 	if ( !empty($attributes['tags'] ) ){
 		$tax_query = array(
 				array(
@@ -107,8 +107,29 @@ function advgbRenderBlockRecentPosts($attributes)
             'order' => empty($attributes['order'])?'desc':$attributes['order'],
             'orderby' => $orderBy,
             'suppress_filters' => false,
-			'exclude' => $post_type === 'post' && isset( $attributes['excludeCurrentPost'] ) && $attributes['excludeCurrentPost'] ? $post->ID : 0,
         );
+
+    if( isset( $attributes['exclude'] ) && ! empty( $attributes['exclude'] ) ) {
+        $args['post__not_in'] = advgbGetPostIdsForTitles( $attributes['exclude'], $post_type );
+    }
+
+    if( isset( $attributes['excludeCurrentPost'] ) && $attributes['excludeCurrentPost'] ) {
+        $args['post__not_in'] = isset( $args['post__not_in'] ) ? array_merge( $args['post__not_in'], array( $post->ID ) ) : array( $post->ID );
+    }
+
+	if( isset( $attributes['taxonomies'] ) && ! empty( $attributes['taxonomies'] ) ) {
+		foreach( $attributes['taxonomies'] as $slug => $terms ) {
+			if ( count( $terms ) > 0 ) {
+				$tax_query[] = array(
+						'taxonomy' => $slug,
+						'field' => 'name',
+						'terms' => $terms,
+						'include_children' => false,
+						'operator' => 'IN',
+				);
+			}
+		}
+	}
 
 	// use tax for anything but pages...
 	if ( ! in_array( $post_type, array( 'page' ), true ) ) {
@@ -129,13 +150,23 @@ function advgbRenderBlockRecentPosts($attributes)
     if (!empty($recent_posts)) {
         foreach ($recent_posts as $key=>$post) {
             $postThumbID = get_post_thumbnail_id($post->ID);
+            $outputImage = advgbCheckImageStatus( $attributes, $key ) && ( $postThumbID || $attributes['enablePlaceholderImage'] );
 
-            $postHtml .= '<article class="advgb-recent-post' . ( advgbCheckImageStatus( $attributes, $key ) ? '' : ' advgb-recent-post--no-image' ) . '">';
+            $postHtml .= '<article class="advgb-recent-post' . ( $outputImage ? '' : ' advgb-recent-post--no-image' ) . '">';
 
-            if ( advgbCheckImageStatus( $attributes, $key ) ) {
+            if ( $outputImage ) {
                 $postThumb = '<img src="' . $rp_default_thumb['url'] . '" />';
+                $postThumbCaption = '';
                 if ($postThumbID) {
                     $postThumb = wp_get_attachment_image($postThumbID, 'large');
+                    if( get_the_post_thumbnail_caption( $post->ID ) && $attributes['displayFeaturedImageCaption']) {
+                        $postThumbCaption = sprintf(
+                            '<span class="advgb-post-caption">%1$s</span>',
+                            get_the_post_thumbnail_caption( $post->ID )
+                        );
+                    } else {
+                        $postThumbCaption = '';
+                    }
                 } else {
                     if ($rp_default_thumb['id']) {
                         $postThumb = wp_get_attachment_image($rp_default_thumb['id'], 'large');
@@ -143,9 +174,10 @@ function advgbRenderBlockRecentPosts($attributes)
                 }
 
                 $postHtml .= sprintf(
-                    '<div class="advgb-post-thumbnail"><a href="%1$s">%2$s</a></div>',
+                    '<div class="advgb-post-thumbnail"><a href="%1$s">%2$s%3$s</a></div>',
                     get_permalink($post->ID),
-                    $postThumb
+                    $postThumb,
+                    $postThumbCaption
                 );
             } elseif ( ($attributes['postView'] === 'frontpage' && $attributes['frontpageStyle'] === 'headline') || ($attributes['postView'] === 'slider' && $attributes['sliderStyle'] === 'headline') ) {
                 $postHtml .= sprintf(
@@ -198,24 +230,24 @@ function advgbRenderBlockRecentPosts($attributes)
             $displayTime = isset($attributes['displayTime']) && $attributes['displayTime'];
 			$postDateDisplay = null;
 
-			if ( $postDate !== 'hide' ) {
-				$format = $displayTime ? ( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) : get_option( 'date_format' );
+            if ( $postDate !== 'hide' ) {
+                $format = $displayTime ? ( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) : get_option( 'date_format' );
 
-				if ( $postDateFormat === 'absolute' ) {
-					if ( $postDate === 'created' ) {
-						$postDateDisplay = get_the_date( $format, $post->ID);
-					} else {
-						$postDateDisplay = get_the_modified_date( $format, $post->ID);
-					}
-				} else {
+                if ( $postDateFormat === 'absolute' ) {
+                    if ( $postDate === 'created' ) {
+                        $postDateDisplay = __( 'Posted on', 'advanced-gutenberg') . ' ' . get_the_date( $format, $post->ID);
+                    } else {
+                        $postDateDisplay = __( 'Updated on', 'advanced-gutenberg') . ' ' . get_the_modified_date( $format, $post->ID);
+                    }
+                } else {
                     // Relative date format
-					if ( $postDate === 'created' ) {
-						$postDateDisplay = __( 'Posted', 'advanced-gutenberg') . ' ' . human_time_diff( get_the_date( 'U', $post->ID ) ) . ' ' . __( 'ago', 'advanced-gutenberg');
-					} else {
-						$postDateDisplay = __( 'Updated', 'advanced-gutenberg') . ' ' .human_time_diff( get_the_modified_date( 'U', $post->ID ) ) . ' ' . __( 'ago', 'advanced-gutenberg');
-					}
-				}
-			}
+                    if ( $postDate === 'created' ) {
+                        $postDateDisplay = __( 'Posted', 'advanced-gutenberg') . ' ' . human_time_diff( get_the_date( 'U', $post->ID ) ) . ' ' . __( 'ago', 'advanced-gutenberg');
+                    } else {
+                        $postDateDisplay = __( 'Updated', 'advanced-gutenberg') . ' ' .human_time_diff( get_the_modified_date( 'U', $post->ID ) ) . ' ' . __( 'ago', 'advanced-gutenberg');
+                    }
+                }
+            }
 
             if ( ! empty( $postDateDisplay ) ) {
                 $postHtml .= sprintf(
@@ -225,12 +257,12 @@ function advgbRenderBlockRecentPosts($attributes)
             }
 
             if ($post_type === 'post' && isset($attributes['displayCommentCount']) && $attributes['displayCommentCount']) {
-				$count = get_comments_number( $post );
-				$postHtml .= sprintf(
-					'<span class="advgb-post-comments"><span class="dashicons dashicons-admin-comments"></span>(%d)</span>',
-					$count
-				);
-			}
+                $count = get_comments_number( $post );
+                $postHtml .= sprintf(
+                    '<span class="advgb-post-comments"><span class="dashicons dashicons-admin-comments"></span>(%d)</span>',
+                    $count
+                );
+            }
 
             $postHtml .= '</div>'; // end advgb-post-info
 
@@ -263,6 +295,27 @@ function advgbRenderBlockRecentPosts($attributes)
 						}
 					}
 					$postHtml .= '</div>';
+				}
+			}
+
+			if ( ! in_array( $post_type, array( 'post', 'page' ), true ) && isset( $attributes['showCustomTaxList'] ) && ! empty( $attributes['showCustomTaxList'] ) ) {
+				$info = advgbGetTaxonomyTerms( $post_type, $post->ID, true, false );
+				if ( ! empty( $info ) ) {
+					foreach ( $attributes['showCustomTaxList'] as $name ) {
+						if ( ! isset( $info[ $name ] ) ) {
+							// maybe the name changed?
+							continue;
+						}
+						$props = $info[ $name ];
+						$slug = $props['slug'];
+						$postHtml .= "<div class='advgb-post-tax advgb-post-cpt advgb-post-${slug}'>";
+						if ( isset( $attributes['linkCustomTax'] ) && $attributes['linkCustomTax'] ) {
+							$postHtml .= implode( '', $props['linked'] );
+						} else {
+							$postHtml .= implode( '', $props['unlinked'] );
+						}
+						$postHtml .= '</div>';
+					}
 				}
 			}
 
@@ -319,9 +372,15 @@ function advgbRenderBlockRecentPosts($attributes)
         $blockClass = 'grid-view columns-' . $attributes['columns'];
     } elseif ($attributes['postView'] === 'list') {
         $blockClass = 'list-view';
+        if($attributes['imagePosition'] !== 'left'){
+            $blockClass .= ' image-' . $attributes['imagePosition'];
+        }
     } elseif ($attributes['postView'] === 'slider') {
         $blockClass = 'slider-view';
         $blockClass .= ' style-' . $attributes['sliderStyle'];
+		if ( isset( $attributes['sliderAutoplay'] ) && $attributes['sliderAutoplay'] ) {
+	        $blockClass .= ' slider-autoplay';
+		}
     } elseif ($attributes['postView'] === 'frontpage') {
         $blockClass = 'frontpage-view';
         $blockClass .= ' layout-' . $attributes['frontpageLayout'];
@@ -332,6 +391,8 @@ function advgbRenderBlockRecentPosts($attributes)
     } elseif ($attributes['postView'] === 'newspaper') {
         $blockClass = 'newspaper-view';
         $blockClass .= ' layout-' . $attributes['newspaperLayout'];
+    } elseif ($attributes['postView'] === 'masonry') {
+        $blockClass = 'masonry-view columns-' . $attributes['columns'] . ' tbl-columns-' . $attributes['columnsT'] . ' mbl-columns-' . $attributes['columnsM'] . ' gap-' . $attributes['gap'];
     }
 
     if (isset($attributes['className'])) {
@@ -348,7 +409,7 @@ function advgbRenderBlockRecentPosts($attributes)
 }
 
 /**
- * Register block Recent Posts
+ * Register block Content Display
  *
  * @return void
  */
@@ -392,6 +453,14 @@ function advgbRegisterBlockRecentPosts()
                 'type' => 'number',
                 'default' => 2,
             ),
+            'columnsT' => array(
+                'type' => 'number',
+                'default' => 2,
+            ),
+            'columnsM' => array(
+                'type' => 'number',
+                'default' => 1,
+            ),
             'displayFeaturedImage' => array(
                 'type' => 'boolean',
                 'default' => true,
@@ -399,6 +468,14 @@ function advgbRegisterBlockRecentPosts()
             'displayFeaturedImageFor' => array(
                 'type' => 'string',
                 'default' => 'all',
+            ),
+            'displayFeaturedImageCaption' => array(
+                'type' => 'boolean',
+                'default' => false,
+            ),
+            'enablePlaceholderImage' => array(
+                'type' => 'boolean',
+                'default' => true,
             ),
             'displayAuthor' => array(
                 'type' => 'boolean',
@@ -460,6 +537,10 @@ function advgbRegisterBlockRecentPosts()
                 'type' => 'string',
                 'default' => 'default',
             ),
+            'sliderAutoplay' => array(
+                'type' => 'boolean',
+                'default' => false,
+            ),
             'newspaperLayout' => array(
                 'type' => 'string',
                 'default' => 'np-1-3',
@@ -493,8 +574,35 @@ function advgbRegisterBlockRecentPosts()
             'textBeforeReadmore' => array(
                 'type' => 'string',
             ),
+            'exclude' => array(
+                'type' => 'array',
+                'items' => array(
+                    'type' => 'string'
+                )
+            ),
             'author' => array(
                 'type' => 'string',
+            ),
+            'taxonomies' => array(
+                'type' => 'object',
+            ),
+			'showCustomTaxList' => array(
+                'type' => 'array',
+                'items' => array(
+                    'type' => 'string'
+                )
+            ),
+            'linkCustomTax' => array(
+                'type' => 'boolean',
+                'default' => false,
+            ),
+            'imagePosition' => array(
+                'type' => 'string',
+                'default' => 'left',
+            ),
+            'onlyFromCurrentUser' => array(
+                'type' => 'boolean',
+                'default' => false,
             ),
 			// deprecrated attributes...
             'displayDate' => array(
@@ -554,6 +662,33 @@ function advgbRegisterCustomFields() {
         )
     );
 
+    register_rest_field( 'post',
+        'absolute_dates',
+        array(
+            'get_callback'  => 'advgbGetAbsoluteDates',
+            'update_callback'   => null,
+            'schema'            => null,
+        )
+    );
+
+    register_rest_field( 'post',
+        'absolute_dates_time',
+        array(
+            'get_callback'  => 'advgbGetAbsoluteDatesTime',
+            'update_callback'   => null,
+            'schema'            => null,
+        )
+    );
+
+    register_rest_field( 'post',
+        'featured_img_caption',
+        array(
+            'get_callback'  => 'advgbGetImageCaption',
+            'update_callback'   => null,
+            'schema'            => null,
+        )
+    );
+
 	// PAGE fields
     register_rest_field( 'page',
         'coauthors',
@@ -581,6 +716,109 @@ function advgbRegisterCustomFields() {
             'schema'            => null,
         )
     );
+    register_rest_field( 'page',
+        'absolute_dates',
+        array(
+            'get_callback'  => 'advgbGetAbsoluteDates',
+            'update_callback'   => null,
+            'schema'            => null,
+        )
+    );
+
+    register_rest_field( 'page',
+        'absolute_dates_time',
+        array(
+            'get_callback'  => 'advgbGetAbsoluteDatesTime',
+            'update_callback'   => null,
+            'schema'            => null,
+        )
+    );
+
+    register_rest_field( 'page',
+        'featured_img_caption',
+        array(
+            'get_callback'  => 'advgbGetImageCaption',
+            'update_callback'   => null,
+            'schema'            => null,
+        )
+    );
+
+	// CPT fields
+	foreach ( advgbGetCPTs() as $cpt ) {
+		register_rest_field( $cpt, 'author' );
+
+		register_rest_field( $cpt,
+			'featured_img',
+			array(
+				'get_callback'  => 'advgbGetFeaturedImage',
+				'update_callback'   => null,
+				'schema'            => null,
+			)
+		);
+
+		register_rest_field( $cpt,
+			'coauthors',
+			array(
+				'get_callback'  => 'advgbGetCoauthors',
+				'update_callback'   => null,
+				'schema'            => null,
+			)
+		);
+
+		register_rest_field( $cpt,
+			'author_meta',
+			array(
+				'get_callback'  => 'advgbGetAuthorMeta',
+				'update_callback'   => null,
+				'schema'            => null,
+			)
+		);
+
+		register_rest_field( $cpt,
+			'relative_dates',
+			array(
+				'get_callback'  => 'advgbGetRelativeDates',
+				'update_callback'   => null,
+				'schema'            => null,
+			)
+		);
+
+        register_rest_field( $cpt,
+            'absolute_dates',
+            array(
+                'get_callback'  => 'advgbGetAbsoluteDates',
+                'update_callback'   => null,
+                'schema'            => null,
+            )
+        );
+
+        register_rest_field( $cpt,
+            'absolute_dates_time',
+            array(
+                'get_callback'  => 'advgbGetAbsoluteDatesTime',
+                'update_callback'   => null,
+                'schema'            => null,
+            )
+        );
+
+		register_rest_field( $cpt,
+			'featured_img_caption',
+			array(
+				'get_callback'  => 'advgbGetImageCaption',
+				'update_callback'   => null,
+				'schema'            => null,
+			)
+		);
+
+		register_rest_field( $cpt,
+			'tax_additional',
+			array(
+				'get_callback'  => 'advgbGetAdditionalTaxInfo',
+				'update_callback'   => null,
+				'schema'            => null,
+			)
+		);
+	}
 
 	// custom routes
 	register_rest_route( 'advgb/v1', '/authors/', array(
@@ -589,10 +827,27 @@ function advgbRegisterCustomFields() {
 		'permission_callback' => function () {
 			return current_user_can( 'edit_others_posts' );
 		},
-  ) );
+	) );
+
+	register_rest_route( 'advgb/v1', '/exclude_post_types/', array(
+		'methods' => 'GET',
+		'callback' => 'advgbExcludePostTypes',
+		'permission_callback' => function () {
+			return current_user_can( 'edit_others_posts' );
+		},
+	) );
 
 }
 add_action( 'rest_api_init', 'advgbRegisterCustomFields' );
+
+/**
+ * Returns the custom post types.
+ *
+ * @return array
+ */
+function advgbGetCPTs() {
+	return get_post_types( array( '_builtin' => false, 'public' => true ) );
+}
 
 /**
  * Allow more orderBy values for posts.
@@ -619,15 +874,64 @@ function advgbAllowPageQueryVars( $query_params ) {
 add_filter( 'rest_page_collection_params', 'advgbAllowPageQueryVars' );
 
 /**
+ * Allow more orderBy values for custom post types.
+ *
+ * @return array
+ */
+function advgbAllowCPTQueryVars( $query_params ) {
+	$query_params['orderby']['enum'][] = 'author';
+	return $query_params;
+}
+
+foreach ( advgbGetCPTs() as $cpt ) {
+	add_filter( "rest_{$cpt}_collection_params", 'advgbAllowCPTQueryVars' );
+}
+
+/**
  * Returns the relative dates of the post.
  *
  * @return array
  */
 function advgbGetRelativeDates( $post ) {
 	return array(
-		'created' => __( 'Posted', 'advanced-gutenberg') . ' ' .human_time_diff( get_the_date( 'U', $post['id'] ) ) . ' ' . __( 'ago', 'advanced-gutenberg'),
-		'modified' => __( 'Updated', 'advanced-gutenberg') . ' ' .human_time_diff( get_the_modified_date( 'U', $post['id'] ) ) . ' ' . __( 'ago', 'advanced-gutenberg')
+		'created' => __( 'Posted', 'advanced-gutenberg') . ' ' . human_time_diff( get_the_date( 'U', $post['id'] ) ) . ' ' . __( 'ago', 'advanced-gutenberg'),
+		'modified' => __( 'Updated', 'advanced-gutenberg') . ' ' . human_time_diff( get_the_modified_date( 'U', $post['id'] ) ) . ' ' . __( 'ago', 'advanced-gutenberg')
 	);
+}
+
+/**
+ * Returns the absolute dates of the post.
+ *
+ * @return array
+ */
+function advgbGetAbsoluteDates( $post ) {
+    $format = get_option( 'date_format' );
+    return array(
+        'created' => __( 'Posted on', 'advanced-gutenberg') . ' ' . get_the_date( $format, $post['id']),
+        'modified' => __( 'Updated on', 'advanced-gutenberg') . ' ' . get_the_modified_date( $format, $post['id'])
+    );
+}
+
+/**
+ * Returns the absolute dates with time of the post.
+ *
+ * @return array
+ */
+function advgbGetAbsoluteDatesTime( $post ) {
+    $format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+    return array(
+        'created' => __( 'Posted on', 'advanced-gutenberg') . ' ' . get_the_date( $format, $post['id']),
+        'modified' => __( 'Updated on', 'advanced-gutenberg') . ' ' . get_the_modified_date( $format, $post['id'])
+    );
+}
+
+/**
+ * Returns the featured image caption
+ *
+ * @return string
+ */
+function advgbGetImageCaption( $post ) {
+	return get_the_post_thumbnail_caption( $post['id'] );
 }
 
 /**
@@ -647,24 +951,57 @@ function advgbGetComments( $post ) {
 function advgbGetAdditionalTaxInfo( $post ) {
 	$info = array();
 
-	$categories = get_the_category( $post['id'] );
-	if ( ! empty( $categories ) ) {
-		$cats = array( 'linked' => array(), 'unlinked' => array() );
-		foreach ( $categories as $category ) {
-			$cats['linked'][] = sprintf( '<a href="%s" class="advgb-post-tax-term">%s</a>', esc_url( get_category_link( $category ) ), esc_html( $category->name ) );
-			$cats['unlinked'][] = sprintf( '<span class="advgb-post-tax-term">%s</span>', esc_html( $category->name ) );
+	$post_type = get_post_type( $post['id'] );
+	if ( 'post' ===  $post_type ) {
+		$categories = get_the_category( $post['id'] );
+		if ( ! empty( $categories ) ) {
+			$cats = array( 'linked' => array(), 'unlinked' => array() );
+			foreach ( $categories as $category ) {
+				$cats['linked'][] = sprintf( '<a href="%s" class="advgb-post-tax-term">%s</a>', esc_url( get_category_link( $category ) ), esc_html( $category->name ) );
+				$cats['unlinked'][] = sprintf( '<span class="advgb-post-tax-term">%s</span>', esc_html( $category->name ) );
+			}
+			$info['categories'] = $cats;
 		}
-		$info['categories'] = $cats;
+
+		$tags = get_the_tags( $post['id'] );
+		if ( ! empty( $tags ) ) {
+			$cats = array( 'linked' => array(), 'unlinked' => array() );
+			foreach ( $tags as $tag ) {
+				$cats['linked'][] = sprintf( '<a href="%s" class="advgb-post-tax-term">%s</a>', esc_url( get_tag_link( $category ) ), esc_html( $tag->name ) );
+				$cats['unlinked'][] = sprintf( '<span class="advgb-post-tax-term">%s</span>', esc_html( $tag->name ) );
+			}
+			$info['tags'] = $cats;
+		}
+	} else {
+		$info = advgbGetTaxonomyTerms( $post_type, $post['id'], false );
 	}
 
-	$tags = get_the_tags( $post['id'] );
-	if ( ! empty( $tags ) ) {
-		$cats = array( 'linked' => array(), 'unlinked' => array() );
-		foreach ( $tags as $tag ) {
-			$cats['linked'][] = sprintf( '<a href="%s" class="advgb-post-tax-term">%s</a>', esc_url( get_tag_link( $category ) ), esc_html( $tag->name ) );
-			$cats['unlinked'][] = sprintf( '<span class="advgb-post-tax-term">%s</span>', esc_html( $tag->name ) );
+	return $info;
+}
+
+/**
+ * Gets the taxonomy terms for a specific custom post.
+ *
+ * @return array
+ */
+function advgbGetTaxonomyTerms( $post_type, $post_id, $front_end = false, $use_tax_slug = true ) {
+	$info = array();
+	$taxonomies = get_object_taxonomies( $post_type, 'objects' );
+	foreach( $taxonomies as $slug => $tax ) {
+		$terms = get_the_terms( $post_id, $slug );
+		$linked = $unlinked = array();
+		if ( $terms ) {
+			foreach( $terms as $term ) {
+				if ( $front_end ) {
+					$linked[] = sprintf( '<div><a href="%s" class="advgb-post-tax-term">%s</a></div>', esc_url( get_term_link( $term->slug, $slug ) ), esc_html( $term->name ) );
+					$unlinked[] = sprintf( '<div><span class="advgb-post-tax-term">%s</span></div>', esc_html( $term->name ) );
+				} else {
+					$linked[] = sprintf( '<a href="%s" class="advgb-post-tax-term">%s</a>', esc_url( get_term_link( $term->slug, $slug ) ), esc_html( $term->name ) );
+					$unlinked[] = sprintf( '<span class="advgb-post-tax-term">%s</span>', esc_html( $term->name ) );
+				}
+			}
 		}
-		$info['tags'] = $cats;
+		$info[ $use_tax_slug ? $slug : html_entity_decode( $tax->label, ENT_QUOTES ) ] = array( 'linked' => $linked, 'unlinked' => $unlinked, 'slug' => $slug, 'name' => esc_html( $tax->label ) );
 	}
 	return $info;
 }
@@ -679,11 +1016,10 @@ function advgbGetCoauthors( $post ) {
 	if ( function_exists('get_multiple_authors') ){
 		$authors = get_multiple_authors( $post[ 'id' ] );
 		foreach ($authors as $user) {
-			$author = MultipleAuthors\Classes\Objects\Author::get_by_user_id( $user->ID );
-			if ( ! $author ) {
-				$author = MultipleAuthors\Classes\Objects\Author::get_by_term_id( $user->ID );
+			$author = advgbGetAuthorByID( $user->ID );
+			if ( $author ) {
+				$coauthors[] = array( 'link' => $author->__get('link'), 'display_name' => $author->__get('name'));
 			}
-			$coauthors[] = array( 'link' => $author->__get('link'), 'display_name' => $author->__get('name'));
 		}
 	}
     return $coauthors;
@@ -691,7 +1027,7 @@ function advgbGetCoauthors( $post ) {
 
 
 /**
- * Populate the author_meta for pages.
+ * Populate the author_meta for pages/custom post types.
  *
  * @return array
  */
@@ -707,28 +1043,41 @@ function advgbGetAuthorMeta( $page ) {
  * @return array
  */
 function advgbGetAuthorFilter( $args, $attributes, $post_type ) {
-	if ( isset( $attributes['author'] ) && ! empty( $attributes['author'] ) ) {
-		if ( ! function_exists('get_multiple_authors') ){
-			$args['author'] = $attributes['author'];
-		} else {
-			$user_id = $attributes['author'];
-			$name = $user_id;
-			if ( intval( $user_id ) > -1 ) {
-				$author = MultipleAuthors\Classes\Objects\Author::get_by_user_id( $user_id );
-				$name = $author->__get( 'display_name' );
-			} else {
-				$author = MultipleAuthors\Classes\Objects\Author::get_by_term_id( $user_id );
-				$name = $author->__get( 'display_name' );
-			}
-
-			$meta_query = array(
-				'key' => 'ppma_authors_name',
-				'value' => $name,
-				'compare' => 'LIKE',
-			);
-			$args['meta_query'][] = $meta_query;
-		}
-	}
+    // Get current logged in user
+    if ( isset( $attributes['onlyFromCurrentUser'] ) && $attributes['onlyFromCurrentUser'] ) {
+        if ( ! function_exists('get_multiple_authors') ){
+            $args['author'] = advgbGetCurrentUserId();
+        } elseif( advgbGetCurrentUserId() === 999999 ) {
+            $args['author'] = advgbGetCurrentUserId();
+        } else {
+            $user_id = advgbGetCurrentUserId();
+            $author = advgbGetAuthorByID( $user_id );
+            if ( $author ) {
+                $args['meta_query'][] = array(
+                    'key' => 'ppma_authors_name',
+                    'value' => $author->__get( 'display_name' ),
+                    'compare' => 'LIKE',
+                );
+            }
+        }
+    } else {
+        // Get author attribute
+        if ( isset( $attributes['author'] ) && ! empty( $attributes['author'] ) ) {
+    		if ( ! function_exists('get_multiple_authors') ){
+    			$args['author'] = $attributes['author'];
+    		} else {
+    			$user_id = $attributes['author'];
+    			$author = advgbGetAuthorByID( $user_id );
+    			if ( $author ) {
+    				$args['meta_query'][] = array(
+    					'key' => 'ppma_authors_name',
+    					'value' => $author->__get( 'display_name' ),
+    					'compare' => 'LIKE',
+    				);
+    			}
+    		}
+    	}
+    }
 	return $args;
 }
 add_filter( 'advgb_get_recent_posts_args', 'advgbGetAuthorFilter', 10, 3 );
@@ -765,24 +1114,23 @@ function advgbGetAuthorFilterREST( $args, $request ) {
 	if ( isset( $request['author'] ) && ! empty( $request['author'] ) && function_exists('get_multiple_authors') ) {
 			$author = $request['author'];
 			$user_id = reset( $author );
-			$name = $user_id;
-			if ( intval( $user_id ) > -1 ) {
-				$author = MultipleAuthors\Classes\Objects\Author::get_by_user_id( $user_id );
-				$name = $author->__get( 'display_name' );
-			} else {
-				$author = MultipleAuthors\Classes\Objects\Author::get_by_term_id( $user_id );
-				$name = $author->__get( 'display_name' );
+			$author = advgbGetAuthorByID( $user_id );
+			if ( $author ) {
+				$args['meta_key'] = 'ppma_authors_name';
+				$args['meta_value'] = $author->__get( 'display_name' );
+				$args['meta_compare'] = 'LIKE';
+				unset( $args['author'] );
+				unset( $args['author__in'] );
 			}
-			$args['meta_key'] = 'ppma_authors_name';
-			$args['meta_value'] = $name;
-			$args['meta_compare'] = 'LIKE';
-			unset( $args['author'] );
-			unset( $args['author__in'] );
 	}
 	return $args;
 }
 add_filter( 'rest_post_query', 'advgbGetAuthorFilterREST', 10, 2 );
 add_filter( 'rest_page_query', 'advgbGetAuthorFilterREST', 10, 2 );
+
+foreach ( advgbGetCPTs() as $cpt ) {
+	add_filter( "rest_{$cpt}_query", 'advgbGetAuthorFilterREST', 10, 2 );
+}
 
 /**
  * Populate the correct arguments in REST for filtering by author.
@@ -800,6 +1148,10 @@ function advgbMultipleAuthorSortREST( $args, $request ) {
 }
 add_filter( 'rest_post_query', 'advgbMultipleAuthorSortREST', 10, 2 );
 
+foreach ( advgbGetCPTs() as $cpt ) {
+	add_filter( "rest_{$cpt}_query", 'advgbMultipleAuthorSortREST', 10, 2 );
+}
+
 /**
  * Check if Featured image is enable for each post
  *
@@ -815,6 +1167,33 @@ function advgbCheckImageStatus( $attributes, $key )  {
     } else {
         return false;
     }
+}
+
+/**
+ * Get id of current user
+ *
+ * @return integer
+ */
+function advgbGetCurrentUserId()  {
+    return is_user_logged_in() ? get_current_user_id() : 999999; // 999999 means user is a guest :)
+}
+
+/**
+ * Returns post ids corresponding to post titles.
+ *
+ * @return array
+ */
+function advgbGetPostIdsForTitles( $titles, $post_type ) {
+	global $wpdb;
+	if ( ! empty( $titles ) ) {
+		// don't use post_name__in here because the title may be different from the slug
+		$placeholders = implode( ',', array_fill(0, count($titles), '%s') );
+		$params = $titles;
+		$params[] = $post_type;
+		$query = $wpdb->prepare( "SELECT DISTINCT ID FROM {$wpdb->posts} WHERE post_title IN ($placeholders) AND post_type = '%s'", $params);
+		return $wpdb->get_col( $query );
+	}
+	return array();
 }
 
 /**
@@ -842,4 +1221,45 @@ function advgbGetAllAuthors( WP_REST_Request $request ) {
 		}
 	}
 	return array_values( $authors );
+}
+
+/**
+ * Wrapper method to fetch an author on the basis of it's ID.
+ *
+ * This ID can either be the WP_User ID (positive integer) or guest author ID (negative integer).
+ *
+ * @return Author|false
+ */
+function advgbGetAuthorByID( $id ) {
+	$author = false;
+	if ( method_exists( 'MultipleAuthors\Classes\Objects\Author', 'get_by_id' ) ) {
+		$author = MultipleAuthors\Classes\Objects\Author::get_by_id( $id );
+	} else {
+		if ( intval( $id ) > -1 ) {
+			$author = MultipleAuthors\Classes\Objects\Author::get_by_user_id( $id );
+		} else {
+			$author = MultipleAuthors\Classes\Objects\Author::get_by_term_id( $id );
+		}
+	}
+	return $author;
+}
+
+/**
+ * Returns the featured image URL.
+ *
+ * @return string
+ */
+function advgbGetFeaturedImage( $post ) {
+	return get_the_post_thumbnail_url( $post[ 'id' ] );
+}
+
+
+/**
+ * Returns all the post types that need to be excluded.
+ *
+ * @return array
+ */
+function advgbExcludePostTypes( WP_REST_Request $request ) {
+	// allow users to add more
+	return apply_filters( 'advgb_exclude_post_types', array( 'attachment', 'web-story' ) );
 }

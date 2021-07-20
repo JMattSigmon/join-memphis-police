@@ -2,57 +2,63 @@
 Contributors: publishpress, stevejburge, htmgarcia, advancedgutenberg, JoomUnited
 Tags: gutenberg, gutenberg blocks, advanced gutenberg, editor, blocks
 Requires at least: 5.0
-Tested up to: 5.7
-Stable tag: 2.6.0
+Tested up to: 5.8
+Stable tag: 2.9.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Gutenberg is good, and with PublishPress Blocks, it’s great! The blocks include accordions, galleries, sliders, tabs, maps and more.
+PublishPress Blocks include accordions, galleries, sliders, tabs, maps and more. Plus it has the best content display block in WordPress.
 
 == Description ==
 
-Gutenberg is good, and with [PublishPress Blocks](https://publishpress.com/blocks/), it’s great! PublishPress Blocks has everything you need to build professional websites with WordPress. The blocks include layout options, sliders, buttons, icons, image galleries, maps, tabs, testimonials, accordions, and much more.
+[PublishPress Blocks](https://publishpress.com/blocks/) has everything you need to build professional websites with WordPress. The blocks include layout options, sliders, buttons, icons, image galleries, maps, tabs, testimonials, accordions, and much more.
 
-- [See the block demos](https://demo.publishpress.com/).
-- [Browse the documentation and videos](https://publishpress.com/knowledge-base/installation/).
+PublishPress Blocks features **the best content block in WordPress**. You can use the "Content Display" block to create blog layouts, lists of posts by a specific author, or even complete newspaper frontpages. This block allows you to show posts, pages and other content types in many beautiful layouts. These layout options are *Grid*, *Frontpage*, *List*, *Newspaper*, *Masonry*, and *Slider*. You also have dozens of different ways to customize your content. You can filter your content by author, category or tag. You can add many types of data to your layouts including posted date, updated date, images, authors, excerpts, intro text, comments and more.
 
-## 4 Powerful features in PublishPress Blocks
+## 5 Powerful features in PublishPress Blocks
 
-1. **Over 20 extra blocks**: The new blocks include accordions, galleries, sliders, tabs, maps, tables, recent posts, and more.
-2. **Permissions for blocks**: You can control who can use each block, including default WordPress blocks.
-3. **Custom CSS for blocks**: You can add your own custom, reusable CSS styles for your blocks.
-4. **Block layout options**: Choose from dozens of layouts. Each one is customizable for desktop, tablet and mobile devices.
+1. **The best content block in WordPress**: The Content Display block allows you to show posts, pages and other content types in many beautiful layouts.
+2. **Over 20 extra blocks**: The blocks include accordions, galleries, sliders, tabs, maps, tables, recent posts, and more.
+3. **Permissions for blocks**: You can control who can use each block, including default WordPress blocks.
+4. **Custom CSS for blocks**: You can add your own custom, reusable CSS styles for your blocks.
+5. **Block layout options**: Choose from dozens of layouts. Each one is customizable for desktop, tablet and mobile devices.
 
-## Feature #1. Extra Blocks
+## Feature #1. The best News block in WordPress
+
+We've already mentioned many features of the Content Display block. So what are you waiting for? **Install PublishPress Blocks and check out the Content Display block**.
+
+This block really is the best way to showcase your posts in the Gutenberg editor.
+
+## Feature #2. Extra Blocks
 
 PublishPress Blocks has everything you need to build professional websites with WordPress. Here's an introduction to the blocks available with the PublishPress Blocks plugin:
 
 - **Accordion block**: [demo](https://demo.publishpress.com/advanced-accordion/).
 - **Button block**: [demo](https://demo.publishpress.com/advanced-button/).
-- **Icon block**: [demo](https://demo.publishpress.com/advanced-icon/).
-- **Image block**: [demo](https://demo.publishpress.com/advanced-image/).
-- **List block**: [demo](https://demo.publishpress.com/advanced-list/).
-- **Table block**: [demo](https://demo.publishpress.com/advanced-table/).
-- **Tabs block**: [demo](https://demo.publishpress.com/advanced-tabs/).
-- **Video block**: [demo](https://demo.publishpress.com/advanced-video/).
 - **Columns Manager block**: [demo](https://demo.publishpress.com/columns-manager/).
 - **Contact Form block**: [demo](https://demo.publishpress.com/contact-form/).
+- **Content Display block**: [demo](https://demo.publishpress.com/content-display/).
 - **Count Up block**: [demo](https://demo.publishpress.com/count-up/).
 - **Gallery block**: [demo](https://demo.publishpress.com/gallery/).
+- **Google Maps block**: [demo](https://demo.publishpress.com/map/).
+- **Icon block**: [demo](https://demo.publishpress.com/advanced-icon/).
+- **Image block**: [demo](https://demo.publishpress.com/advanced-image/).
 - **Images Slider block**: [demo](https://demo.publishpress.com/images-slider/).
 - **Info Box block**: [demo](https://demo.publishpress.com/info-box/).
+- **List block**: [demo](https://demo.publishpress.com/advanced-list/).
 - **Login / Register Form block**: [demo](https://demo.publishpress.com/login-register-form/).
-- **Google Maps block**: [demo](https://demo.publishpress.com/map/).
 - **Newsletter block**: [demo](https://demo.publishpress.com/newsletter/).
-- **Recent Posts block**: [demo](https://demo.publishpress.com/recent-posts/).
 - **Search bar block**: [demo](https://demo.publishpress.com/search-bar/).
 - **Social Links block**: [demo](https://demo.publishpress.com/social-links/).
 - **Summary block**: [demo](https://demo.publishpress.com/summary).
+- **Table block**: [demo](https://demo.publishpress.com/advanced-table/).
+- **Tabs block**: [demo](https://demo.publishpress.com/advanced-tabs/).
 - **Testimonial block**: [demo](https://demo.publishpress.com/testimonial/).
+- **Video block**: [demo](https://demo.publishpress.com/advanced-video/).
 - **WooCommerce block**: [demo](https://demo.publishpress.com/woo-products/).
 
-## Feature #2. Permissions for Blocks
+## Feature #3. Permissions for Blocks
 
 PublishPress Blocks allows you to enable or disable blocks for some users. For example, you can disable the “Classic” block if you don’t want users to rely on the old WordPress editor.
 
@@ -60,13 +66,13 @@ Using the PublishPress Blocks plugin, you can create editor profiles for differe
 
 [Click here to see how to control permissions for blocks](https://publishpress.com/knowledge-base/editor-profiles/)
 
-## Feature #3. Custom CSS Styles for Blocks
+## Feature #4. Custom CSS Styles for Blocks
 
 You create custom, reusable CSS styles and making them available to end users. Name the style, and let the content editors use it when they need it. This is a very useful feature that empowers your users to add pre-defined CSS styles to any block.
 
 [Click here to see how to create custom styles for blocks](https://publishpress.com/knowledge-base/custom-css/).
 
-## Feature #4. Block Layout Options
+## Feature #5. Block Layout Options
 
 PublishPress Blocks allows you to create flexible and beautiful layouts. You get 24 layout options with different options for desktop, tablet and mobile devices. You can create these layouts with Columns Manager block. This Columns Manager block is based on the default Columns block in Gutenberg. This new version of the block has many extra features including extra layout options, padding, margins and much more.
 
@@ -152,7 +158,7 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
 1. Columns Manager block with flexible column sizes for desktop, tablet and mobile
 1. Images Slider block with customizable text
 1. Customizable Login/Register Form block
-1. Recent Posts block with a lot of features, including views, support for multiple categories and tags
+1. Content Display block with a lot of features, including views, styles, filter by author, support for multiple categories and tags
 1. Search Bar block is a great alternative to default search form
 1. Social Links block
 1. Testimonial block support columns and slider views
@@ -160,7 +166,112 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
 
 == Changelog ==
 
-= 2.6.0 =
+= 2.9.1 - 20 Jul 2021 =
+ * Fix: Legacy Widgets and Widget Area blocks support for profiles
+
+= 2.9.0 - 19 Jul 2021 =
+ * Add: Support for PublishPress Blocks in widgets.php page
+ * Add: Support for Block Access to Widget areas
+ * Add: Assets loading in Widget areas in frontend
+ * Add: Custom styles support for widgets
+ * Add: Patch for Twenty Twenty-One theme, footer widgets columns in frontend for Slick
+ * Add: Back color format option to Advanced Accordion block
+ * Fix: Adjust blocks preview CSS for Widgets area
+ * Fix: Woo Products slideshow in frontend
+ * Fix: Warning for profiles without assigned users in Block access list
+ * Fix: Label to show posts from current user for Content Display block
+ * Fix: Customizer preview for Content Display, Woo Products, Testimonial, Images Slider and Advanced Image blocks
+ * Fix: Cropped blocks display in widgets customizer for Login/Register and Search Bar
+ * Remove: Deprecated filter `block_categories`. Replaced with `block_categories_all`
+ * Remove: Sidebar settings on widgets page and theme customizer
+
+= 2.8.2 - 7 Jul 2021 =
+ * Add: Show only posts from current user setting for Content Display block
+ * Add: Custom styles support to Image block
+ * Add: Description to choose columns layout for Columns Manager block
+ * Fix: Spacing between columns preview in editor for Columns Manager block
+ * Fix: Load and resize triggers for Masonry view for Content Display block
+ * Fix: Blocks spacing in editor
+ * Fix: Focus for tabs in Advanced Tabs block in Twenty Twenty-One theme in frontend
+ * Fix: Duplicated id for Advanced Tabs block
+ * Remove: !important property for margin-bottom and margin-top for each block in editor
+
+= 2.8.1 - 28 Jun 2021 =
+  * Add: Increase max padding and margin for Columns manager and Column blocks
+  * Add: Rename "Summary" block to "Table of Contents"
+  * Add: Translation support to javascript for block Settings popup
+  * Add: Setting to display images on the right for Content Display's block List view
+  * Add: Setting to not display placeholder featured image for Content Display block
+  * Fix: Default color and background values when are empty in frontend for Advanced Button blocks
+  * Fix: Default label for custom styles dropdown in editor
+  * Fix: Spacing for Custom styles dropdown in editor
+  * Fix: Enable Contributor and Subscriber in "All User Roles" profile
+  * Fix: Block Settings popup spacing
+  * Fix: Language support in Block Settings
+  * Fix: Spacing for Content Display block in Grid and List views
+  * Fix: Navigation dots margin for Slider view in Content Display block
+  * Fix: Autoplay in frontend when loading more than once instance of Content Display's block with Slider view
+  * Fix: Adjust Number of items when selecting a Newspaper layout for Content Display block
+  * Fix: Timezone for date time in Content Display block
+  * Fix: Advanced Accordion content overlay
+  * Fix: Duplicated Blocks links in admin when having Free and Pro plugins activated
+  * Fix: PublishPress Blocks category is listed twice in editor when having Free and Pro plugins activated
+  * Fix: RTL support for Images Slider block
+
+= 2.8.0 - 15 Jun 2021 =
+  * Add: Rename menu to "Blocks"
+  * Add: Ask for review popup after 1 week
+  * Add: Load only custom styles in use in frontend
+  * Add: Block Access layout improvements
+  * Add: Roles and Users to Block Access profiles list
+  * Add: Overlay image caption option for Gallery blocks
+  * Add: HTML tag options for the Header in Advanced Accordion Block
+  * Fix: Fix long broken taxonomy display for Content Display block
+  * Fix: Editor preview when changing number of items in Masonry view for Content Display block
+  * Fix: Hook when plugin is activated
+  * Fix: Advanced List transform can break the editor page after is converted into List block
+  * Remove: Author and Date from Block Access profiles list
+
+= 2.7.1 - 31 May 2021 =
+  * Add: Preview for custom styles in editor
+  * Add: Support for custom styles to heading, list, code, preformatted, table, columns and group blocks
+  * Add: Spacing optimization for Advanced List block
+  * Add: More icons to Advanced List block
+  * Fix: Original editor width inherit theme's editor width
+  * Fix: Filter product status as Featured for Woo Products block
+  * Fix: Undefined HTTP_REFERER for Login / Register Form block
+  * Fix: Duplicated ID when duplicating Advanced List block
+  * Fix: Warning in frontend when switching to a different post type but keeping previous post type taxonomies
+  * Fix: Warning for taxonomy loop
+
+= 2.7.0 - 18 May 2021 =
+  * Add: Custom Post Type support for Content Display block
+  * Add: Autoplay control to Slider view for Content Display block
+  * Add: Top notice in admin with link to Pro version
+  * Add: Lighter color scheme for sidebar menu in admin
+  * Fix: Default image load in editor for WooProducts block
+  * Fix: Web Stories block by Google not available in editor
+  * Fix: Multiple email addresses in Email settings
+
+= 2.6.2 - 22 Apr 2021 =
+  * Add: CSS properties to images for Content Display block to avoid inherit styles from themes
+  * Remove: Load block's CSS through wp_add_inline_style function
+
+= 2.6.1 - 21 Apr 2021 =
+  * Add: Load PublishPress Blocks category as first in Gutenberg editor
+  * Add: "Content Display" as new name for Recent Posts block
+  * Add: "Posted on" and "Updated on" labels before modified date
+  * Add: Caption support to Content Display block
+  * Add: Exclusion support to Content Display block
+  * Add: Masonry view with responsive support to Content Display block
+  * Add: Filters panel to group category, tags, author and exclusion settings for Content Display block
+  * Add: Recursive method to load CSS for blocks in frontend
+  * Fix: Load dynamic block's CSS through wp_add_inline_style function
+  * Fix: Background for Frontapage view's Boxed style for Content Display block
+  * Fix: Use rgba border color in Newspaper view for Content Display block
+  * Remove: "ADVGB" from Content Display and WooProducts blocks when loading in editor
+
+= 2.6.0 - 12 Apr 2021 =
   * Add: Compressed CSS files only
   * Add: Tags support to Recent Posts block
   * Add: PublishPress Authors support to Recent Posts block
@@ -196,7 +307,7 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
   * Remove: Not required formatting for editable elements for Login/Register block
   * Remove: Static font-size for post titles for Recent Posts block
 
-= 2.5.7 =
+= 2.5.7 - 8 Mar 2021 =
  * Add: Separate pages for Settings and Default block settings
  * Add: Multiple category support to Recent Posts block
  * Fix: Alt attribute for img tag in Images Slider block
@@ -213,11 +324,11 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
  * Remove: Wide width alignment option for Advanced Button block
  * Remove: Refresh option for Advanced Button block
 
-= 2.5.6 =
+= 2.5.6 - 23 Feb 2021 =
  * Fix: Bug in deprecation for Advanced Accordion block from v2.5.5
  * Remove: Full path in compiled JavaScript
 
-= 2.5.5 =
+= 2.5.5 - 17 Feb 2021 =
  * Add: Bigger font-size for custom styles in new plugin installations
  * Add: Newest version of Material Icons
  * Fix: Center alignment for Advanced Table block
@@ -234,7 +345,7 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
  * Remove: Unnecessary allowed formats for Advanced Accordion header
  * Remove: Format options for Advanced Image block
 
-= 2.5.4 =
+= 2.5.4 - 4 Feb 2021 =
  * Fix: Deprecated code for Advanced Button block
  * Fix: Deprecated code for Advanced Accordion block
  * Fix: Deprecated code for Advanced Image block
@@ -249,20 +360,20 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
  * Fix: Deprecated code for Summary block
  * Fix: Deprecated code for Woo Products block
 
-= 2.5.3 =
+= 2.5.3 - 21 Jan 2021 =
  * Fix: Advanced Button and Advanced Icon duplication id
  * Fix: Deprecated prop for Advanced Button block
  * Fix: Editor width and Columns visual guide settings in WordPress 5.6
  * Add: Darker border color for Columns visual guide
 
-= 2.5.2 =
+= 2.5.2 - 14 Jan 2021 =
  * Fix: Summary block style and better CSS handling for margin-left
  * Fix: Ajax call to update the block list in db
  * Fix: Deprecated core/editor to core/block-editor Namespace
  * Fix: Introduced bug in 2.5.1 for gallery lightbox target
  * Add: Better gallery lightbox target support
 
-= 2.5.1 =
+= 2.5.1 - 11 Jan 2021 =
  * Add: Anchor support for all the blocks, except: Adv. Icons, Columns Manager, Info Box, Recent Posts and Testimonial
  * Fix: Fix gallery lightbox target to open a bigger version of the image (hughworm)
  * Add: Better CSS selector for Advanced List block
@@ -270,7 +381,7 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
  * Remove: Old CSS approach for Columns Manager columns and layouts
  * Fix: Advanced Button center alignment in editor
 
-= 2.5.0 =
+= 2.5.0 - 9 Dec 2020 =
  * Add: "PublishPress Blocks" as new plugin's name
  * Add: New admin design
  * Add: Support for javascript translations
@@ -278,35 +389,35 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
  * Add: More translation strings for Spanish (Spain)
  * Fix: Strings that are saved as static content
 
-= 2.4.7 =
+= 2.4.7 - 19 Oct 2020 =
  * Fix: Global columns visual guide
  * Fix: Deprecated isDefault replaced with isSecondary
  * Fix: Hidden text in selected button groups on content Gutenberg sidebar
  * Fix: Custom class support for Advanced Icon and Info Box blocks
  * Fix: Tooltips in configuration pages
 
-= 2.4.6 =
+= 2.4.6 - 16 Sep 2020 =
  * Fix: Support for nested blocks in 5th level
 
-= 2.4.5 =
+= 2.4.5 - 3 Sep 2020 =
  * Fix: Load Custom Styles in multisites
  * Add: Optimize blocks style loading
 
-= 2.4.4 =
+= 2.4.4 - 24 Aug 2020 =
  * Fix: Recent Posts block, broken Category setting
  * Add: AdvQueryControls component
 
-= 2.4.3 =
+= 2.4.3 - 17 Aug 2020 =
  * Fix: Load common CSS for nested blocks
 
-= 2.4.2 =
+= 2.4.2 - 14 Aug 2020 =
  * Fix: Styles not loading in frontend for nested blocks in WordPress 5.5
 
-= 2.4.1 =
+= 2.4.1 - 11 Aug 2020 =
  * Fix: Border width for Advanced Button Block
  * Fix: Missing Thickbox CSS loading
 
-= 2.4.0 =
+= 2.4.0 - 5 Aug 2020 =
  * Remove: JU Translation system
  * Add: Native language files support
  * Add: Support for language overrides created with version 2.3.11 and older
@@ -317,10 +428,10 @@ The PublishPress Blocks Custom CSS can be created from the plugin configuration 
  * Fix: Load reCaptcha in Login/register, Contact form and Newsletter blocks only when required in frontend
  * Fix: Load Google Maps API in Map block only when required in frontend
 
-= 2.3.11 =
+= 2.3.11 - 22 Jun 2020 =
  * Fix: Improve default background position for new Advanced image block
 
-= 2.3.10 =
+= 2.3.10 - 8 Jun 2020 =
  * Fix: Blocks spacing
  * Fix: Default background position for new Advanced image block
 
