@@ -16,11 +16,11 @@ include 'lib/benefit-post-type.php'; // Benefit Post type
 
 
 add_action('acf/init', 'mpd_acf_init_block_types');
-function mpd_acf_init_block_types() {
+function mpd_acf_init_block_types()
+{
 
     // Check function exists.
-    if( function_exists('acf_register_block_type') ) {
-
+    if (function_exists('acf_register_block_type')) {
         acf_register_block_type(array(
             'name'              => 'hiring-process',
             'title'             => __('Hiring Process'),
@@ -178,19 +178,20 @@ add_theme_support('align-wide');
 // Block Editor Stylesheet
 //--------------------------------------
 
-function mpd_add_editor_styles() {
-
+function mpd_add_editor_styles()
+{
     add_theme_support('editor-styles');
 
-    add_editor_style( [
+    add_editor_style([
         'assets/css/custom.min.css',
         'assets/css/editor.min.css'
-    ] );
+    ]);
 }
-add_action( 'after_setup_theme', 'mpd_add_editor_styles' );
+add_action('after_setup_theme', 'mpd_add_editor_styles');
 
 
-function mpd_add_editor_script() {
+function mpd_add_editor_script()
+{
     echo '<script src ="' .get_template_directory_uri() . '/assets/js/dist/scripts.min.js"></script>';
 }
 add_action('admin_head', 'mpd_add_editor_script');
@@ -293,5 +294,15 @@ function mpd_acf_svg_helper($field)
 <?php
 
             }
+    }
+}
+
+
+function is_tribe_calendar()
+{ // detect if we're on an Events Calendar page
+    if (tribe_is_event() || tribe_is_event_category() || tribe_is_in_main_loop() || tribe_is_view() || 'tribe_events' == get_post_type() || is_singular('tribe_events')) {
+        return true;
+    } else {
+        return false;
     }
 }

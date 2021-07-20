@@ -15,7 +15,7 @@ get_template_part('partials/template-part', 'popup');
 get_template_part('partials/template-part', 'mobilenav-mmenu');
 
 // Make sure this isn't the 404 page
-if(!is_404()):
+if (!is_404()):
 
 $hero = get_field('hero_type', $post->ID);
 
@@ -39,28 +39,28 @@ if ($hero === 'video') {
     if (have_rows('video_hero')) :
         while (have_rows('video_hero')) : the_row();
         
-        $mp4 = get_sub_field('mp4_video');
-        $webm = get_sub_field('webm_video');
-        $poster = get_sub_field('poster_image');
+    $mp4 = get_sub_field('mp4_video');
+    $webm = get_sub_field('webm_video');
+    $poster = get_sub_field('poster_image');
                 
-        echo '<video autoplay muted loop id="inner-video-hero"';
+    echo '<video autoplay muted loop id="inner-video-hero"';
                 
-        if ($poster) {
-            echo 'poster="'.$poster.'"';
-        }
-        echo '>';
+    if ($poster) {
+        echo 'poster="'.$poster.'"';
+    }
+    echo '>';
 
-        if ($mp4) {
-            echo '<source src="'.$mp4.'">';
-        }
+    if ($mp4) {
+        echo '<source src="'.$mp4.'">';
+    }
 
-        if ($webm) {
-            echo '<source src="'.$webm.'">';
-        }
+    if ($webm) {
+        echo '<source src="'.$webm.'">';
+    }
                 
-        echo '</video>'; // #video-banner
+    echo '</video>'; // #video-banner
                 
-        endwhile;
+    endwhile;
     endif;
 }
 
@@ -68,7 +68,6 @@ get_template_part('partials/template-part', 'header-info'); // Header info
 
 // Make sure it's not the front page
 if (!is_front_page()) {
-    
     echo '<section class="page-hero';
     
     if ($hero == 'video') {
@@ -86,7 +85,7 @@ if (!is_front_page()) {
 
 echo '</header>'; // #header-container
 
-else: 
+else:
     
     //-----------------
     // 404 Page Header
