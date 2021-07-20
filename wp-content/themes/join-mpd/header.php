@@ -11,4 +11,3 @@
 </head>
 
 <body <?php body_class(); ?>>
-    <p>Hi staging</p>
