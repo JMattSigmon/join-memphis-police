@@ -1,0 +1,55 @@
+//================
+// Events Styles
+//================
+
+// Calendar View
+.tribe-events-calendar {
+  th {
+    font-family: $heading;
+    color: $dkblue;
+    @include font-size(18px, 100%);
+    background-color: $gray;
+  }
+
+  // Present day panel
+  td {
+    &.tribe-events-present {
+      div[id*='tribe-events-daynum-'] {
+        background-color: $dkblue;
+      }
+    }
+  }
+
+  // Event title
+  .tribe-events-month-event-title {
+    text-align: center;
+    font-family: $body;
+    a {
+      color: $dkblue;
+      font-weight: 700;
+      @include font-size(14px);
+      display: block;
+      padding: 5px;
+      &:hover {
+        background-color: $blk05;
+      }
+    }
+  }
+
+  // Tooltip
+  .tribe-events-tooltip {
+    text-align: center;
+    h3 {
+      @include font-size(20px);
+    }
+  }
+}
+
+// Footer
+.tribe-events-nav-pagination {
+  a {
+    color: $dkblue;
+    font-size: $heading;
+    font-weight: 700;
+  }
+}
