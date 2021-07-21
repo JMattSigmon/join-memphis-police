@@ -52,6 +52,7 @@
                 href="<?php echo esc_url(home_url('/')); ?>privacy-policy/">Privacy Policy</a></p>
     </div>
 </div>
+</div><!-- #body-contain -->
 </body>
 <?php wp_footer(); ?>
 
