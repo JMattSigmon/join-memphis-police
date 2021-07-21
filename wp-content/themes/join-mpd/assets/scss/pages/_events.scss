@@ -16,6 +16,9 @@
     &.tribe-events-present {
       div[id*='tribe-events-daynum-'] {
         background-color: $dkblue;
+        a {
+          background-color: $dkblue;
+        }
       }
     }
   }
