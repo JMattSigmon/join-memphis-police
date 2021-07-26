@@ -11,4 +11,11 @@
 </head>
 
 <body <?php body_class(); ?>>
+    <?php
+
+    // Include Popup
+    get_template_part('partials/template-part', 'popup');
+    
+    ?>
+
     <div id="body-contain">

@@ -14,7 +14,7 @@ $default = <<<EOT
 EOT;
 
  $h3 = get_field('popup_header', 'option') ?: 'Want to pre-qualify or speak to a recruiter?'; // Popup Header
- $stuff = get_field('popup_content', 'option') ?: $default; 
+ $stuff = get_field('popup_content', 'option') ?: $default;
 
 ?>
 
@@ -22,11 +22,11 @@ EOT;
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div id="popup-info" class="modal-content box-shadow">
 
-        <i class="fas fa-times"></i>
+            <i class="fas fa-times"></i>
 
             <div class="modal-header">
                 <h3 class="modal-title"><?php esc_html_e($h3); ?></h3>
-                
+
             </div><!-- .modal-header -->
 
             <div class="modal-body">
