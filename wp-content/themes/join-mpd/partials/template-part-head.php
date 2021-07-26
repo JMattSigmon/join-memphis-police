@@ -8,8 +8,7 @@
 * @package  Partials
 *
 */
-// Include Popup
-get_template_part('partials/template-part', 'popup');
+
 
 // Include Mobile Navigation Partial
 get_template_part('partials/template-part', 'mobilenav-mmenu');
