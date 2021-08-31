@@ -123,7 +123,12 @@ if (have_posts()) : while (have_posts()) : the_post();
                         echo ' Last Name ' .$sort. '';
                     }
                     echo '">';
-                    esc_html_e($hrn);
+                    if ($hrn) {
+                        esc_html_e($hrn);
+                    } else {
+                        echo 'Email ' .$dept. '';
+                    }
+                    
                     echo '</a><br>';
                     echo 'HR Recruiter<br>';
                     echo '<a href="tel:';
@@ -145,7 +150,12 @@ if (have_posts()) : while (have_posts()) : the_post();
                         echo ' Last Name ' .$sort. '';
                     }
                     echo '">';
-                    esc_html_e($mpdn);
+                    if ($mpdn) {
+                        esc_html_e($mpdn);
+                    } else {
+                        echo 'Email ' .$dept. '';
+                    }
+                    
                     echo '</a><br>';
                     echo 'MPD REcruiter<br>';
                     echo '<a href="tel:';
@@ -164,7 +174,12 @@ if (have_posts()) : while (have_posts()) : the_post();
                     echo '<a href="mailto:joinmpd@memphistn.gov?subject=MPD Recruit ';
                     echo $dept;
                     echo '">';
-                    esc_html_e($pstn);
+                    if ($pstn) {
+                        esc_html_e($pstn);
+                    } else {
+                        echo 'Email ' .$dept. '';
+                    }
+                    
                     echo '</a><br>';
                     echo 'PST Recruiter<br>';
                     echo '<a href="tel:';
