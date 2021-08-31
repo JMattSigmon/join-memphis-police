@@ -129,13 +129,16 @@ if (have_posts()) : while (have_posts()) : the_post();
                         echo 'Email ' .$dept. '';
                     }
                     
-                    echo '</a><br>';
-                    echo 'HR Recruiter<br>';
-                    echo '<a href="tel:';
-                    esc_html_e($hrp);
-                    echo '">';
-                    esc_html_e($hrp);
                     echo '</a>';
+                    if ($hrp) {
+                        echo '<br>';
+                        echo 'HR Recruiter<br>';
+                        echo '<a href="tel:';
+                        esc_html_e($hrp);
+                        echo '">';
+                        esc_html_e($hrp);
+                        echo '</a>';
+                    }
                     echo '</p>';
                 }
 
@@ -156,13 +159,17 @@ if (have_posts()) : while (have_posts()) : the_post();
                         echo 'Email ' .$dept. '';
                     }
                     
-                    echo '</a><br>';
-                    echo 'MPD REcruiter<br>';
-                    echo '<a href="tel:';
-                    esc_html_e($mpdp);
-                    echo '">';
-                    esc_html_e($mpdp);
                     echo '</a>';
+                    if ($mpdp) {
+                        echo '<br>';
+                        echo 'MPD REcruiter<br>';
+                        echo '<a href="tel:';
+                        esc_html_e($mpdp);
+                        echo '">';
+                        esc_html_e($mpdp);
+                        echo '</a>';
+                    }
+
                     echo '</p>';
                 }
 
@@ -180,13 +187,16 @@ if (have_posts()) : while (have_posts()) : the_post();
                         echo 'Email ' .$dept. '';
                     }
                     
-                    echo '</a><br>';
-                    echo 'PST Recruiter<br>';
-                    echo '<a href="tel:';
-                    esc_html_e($pstp);
-                    echo '">';
-                    esc_html_e($pstp);
                     echo '</a>';
+                    if ($pstp) {
+                        echo '<br>';
+                        echo 'PST Recruiter<br>';
+                        echo '<a href="tel:';
+                        esc_html_e($pstp);
+                        echo '">';
+                        esc_html_e($pstp);
+                        echo '</a>';
+                    }
                     echo '</p>';
                 }
                         
