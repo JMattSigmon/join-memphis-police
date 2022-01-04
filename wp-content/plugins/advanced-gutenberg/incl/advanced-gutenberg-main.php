@@ -16,7 +16,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
         public static $default_roles_access = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
 
         /**
-         * Default active all blocks for new profile
+         * Default active all blocks
          *
          * @var string  All blocks
          */
@@ -129,18 +129,11 @@ if(!class_exists('AdvancedGutenbergMain')) {
         );
 
         /**
-         * Store original editor settings value, before we modify it to allow/hide blocks based on profiles
+         * Store original editor settings value, before we modify it to allow/hide blocks based on user roles
          *
          * @var string Original settings
          */
         protected static $original_block_editor_settings;
-
-        /**
-         * Activated profile to get activated blocks array
-         *
-         * @var null    ID profiles
-         */
-        protected $active_profile = null;
 
         /**
          * AdvancedGutenbergMain constructor.
@@ -182,10 +175,16 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 if($wp_version >= 5.8) {
                     add_action('admin_enqueue_scripts', array($this, 'addEditorAssetsWidgets'), 9999);
                     add_filter('block_editor_settings_all', array($this, 'replaceEditorSettings'), 9999);
-                    add_filter('block_categories_all', array($this, 'addAdvBlocksCategory'));
+
+                    if( $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
+                        add_filter('block_categories_all', array($this, 'addAdvBlocksCategory'));
+                    }
                 } else {
                     add_filter('block_editor_settings', array($this, 'replaceEditorSettings'), 9999);
-                    add_filter('block_categories', array($this, 'addAdvBlocksCategory'));
+
+                    if( $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
+                        add_filter('block_categories', array($this, 'addAdvBlocksCategory'));
+                    }
                 }
 
                 // Ajax
@@ -198,6 +197,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 // Front-end
                 add_filter('render_block_data', array($this, 'contentPreRender'));
                 add_filter('the_content', array($this, 'addFrontendContentAssets'), 9);
+                add_filter('the_content', array($this, 'addNonceToFormBlocks'), 99);
 
                 if($wp_version >= 5.8) {
                     add_filter('widget_block_content', array($this, 'addFrontendWidgetAssets'), 9);
@@ -311,9 +311,18 @@ if(!class_exists('AdvancedGutenbergMain')) {
             self::$original_block_editor_settings = $settings;
 
             $advgb_blocks_vars = array();
-            $advgb_blocks_vars['blocks'] = $this->getUserBlocksForGutenberg();
 
-            if (is_array($settings['allowedBlockTypes'])) {
+            if( $this->settingIsEnabled( 'enable_block_access' ) ) {
+                $advgb_blocks_vars['blocks'] = $this->getUserBlocksForGutenberg();
+            }
+
+            // No Block Access defined for this role, so we define empty arrays
+            if( !isset( $advgb_blocks_vars['blocks']['active_blocks'] ) && empty( $advgb_blocks_vars['blocks']['active_blocks'] ) ) {
+                $advgb_blocks_vars['blocks']['active_blocks']   = array();
+                $advgb_blocks_vars['blocks']['inactive_blocks'] = array();
+            }
+
+            if ( is_array($settings['allowedBlockTypes']) ) {
                 // Remove blocks from the list that are not allowed
                 // Note that we do not add missing blocks, because another plugin may have used the hook to remove some of them
                 foreach ($settings['allowedBlockTypes'] as $key => $type) {
@@ -324,7 +333,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
             } elseif ($settings['allowedBlockTypes'] === true) {
                 // All was allowed, only return what the profile allows
 
-                if (count($advgb_blocks_vars['blocks']['active_blocks']) || count($advgb_blocks_vars['blocks']['inactive_blocks'])) {
+                if ( count($advgb_blocks_vars['blocks']['active_blocks']) || count($advgb_blocks_vars['blocks']['inactive_blocks']) ) {
                     $settings['allowedBlockTypes'] = $advgb_blocks_vars['blocks']['active_blocks'];
                 }
             }
@@ -376,6 +385,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
 
             $this->enqueueEditorAssets();
             $this->advgbBlocksVariables(false);
+            $this->advgbDisableBlocksWidgetAreas();
         }
 
         /**
@@ -385,28 +395,58 @@ if(!class_exists('AdvancedGutenbergMain')) {
          */
         public function enqueueEditorAssets()
         {
-            wp_enqueue_script(
-                'advgb_blocks',
-                plugins_url('assets/blocks/blocks.js', dirname(__FILE__)),
-                array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-data', 'wp-editor', 'wp-plugins', 'wp-compose' ),
-                ADVANCED_GUTENBERG_VERSION,
-                true
-            );
+            $currentScreen = get_current_screen();
+
+            if( $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
+
+                if( $currentScreen->id === 'customize' ) {
+                    // Customizer > Widgets
+                    $wp_editor_dep = 'wp-customize-widgets';
+                } elseif( $currentScreen->id === 'widgets' ) {
+                    // Appearance > Widgets
+                    $wp_editor_dep = 'wp-edit-widgets';
+                } else {
+                    // Post edit
+                    $wp_editor_dep = 'wp-editor';
+                }
+
+                wp_enqueue_script(
+                    'advgb_blocks',
+                    plugins_url('assets/blocks/blocks.js', dirname(__FILE__)),
+                    array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-data', $wp_editor_dep, 'wp-plugins', 'wp-compose' ),
+                    ADVANCED_GUTENBERG_VERSION,
+                    true
+                );
+            }
+
+            // Don't load custom-styles.js in widgets.php and Theme Customizer > Widgets
+            if(
+                $this->settingIsEnabled( 'enable_custom_styles' )
+                && $currentScreen->id !== 'widgets'
+                && is_customize_preview() === false
+            ) {
+                wp_enqueue_script(
+                    'advgb_custom_styles_script',
+                    plugins_url('assets/blocks/custom-styles.js', dirname(__FILE__)),
+                    array( 'wp-blocks' ),
+                    ADVANCED_GUTENBERG_VERSION,
+                    true
+                );
+            }
 
             // Don't load post-sidebar.js in widgets.php and Theme Customizer > Widgets
-            $currentScreen = get_current_screen();
             if( $currentScreen->id !== 'widgets' && is_customize_preview() === false ) {
                 wp_enqueue_script(
                     'advgb_post_sidebar',
                     plugins_url('assets/blocks/post-sidebar.js', dirname(__FILE__)),
-                    array( 'advgb_blocks' ),
+                    array( 'wp-blocks' ),
                     ADVANCED_GUTENBERG_VERSION,
                     true
                 );
             }
 
             // Pro
-            if(defined('ADVANCED_GUTENBERG_PRO')) {
+            if( defined( 'ADVANCED_GUTENBERG_PRO' ) && $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
                 if ( method_exists( 'PPB_AdvancedGutenbergPro\Utils\Definitions', 'advgb_pro_enqueue_scripts_editor' ) ) {
                     PPB_AdvancedGutenbergPro\Utils\Definitions::advgb_pro_enqueue_scripts_editor();
                 }
@@ -435,7 +475,16 @@ if(!class_exists('AdvancedGutenbergMain')) {
         public function advgbBlocksVariables($post = true)
         {
             $advgb_blocks_vars = array();
-            $advgb_blocks_vars['blocks'] = $this->getUserBlocksForGutenberg();
+
+            if( $this->settingIsEnabled( 'enable_block_access' ) ) {
+                $advgb_blocks_vars['blocks'] = $this->getUserBlocksForGutenberg();
+            }
+
+            // No Block Access defined for this role, so we define empty arrays
+            if( !isset( $advgb_blocks_vars['blocks']['active_blocks'] ) && empty( $advgb_blocks_vars['blocks']['active_blocks'] ) ) {
+                $advgb_blocks_vars['blocks']['active_blocks']   = array();
+                $advgb_blocks_vars['blocks']['inactive_blocks'] = array();
+            }
 
             global $post;
             if ($post) {
@@ -446,26 +495,27 @@ if(!class_exists('AdvancedGutenbergMain')) {
             $advgb_blocks_vars['original_settings'] = self::$original_block_editor_settings;
             $advgb_blocks_vars['ajaxurl'] = admin_url('admin-ajax.php');
             $advgb_blocks_vars['nonce'] = wp_create_nonce('advgb_update_blocks_list');
-            wp_localize_script('advgb_blocks', 'advgb_blocks_vars', $advgb_blocks_vars);
+            wp_localize_script('wp-blocks', 'advgb_blocks_vars', $advgb_blocks_vars);
 
             // Set variable needed by blocks editor
-            $avatarHolder       = plugins_url('assets/blocks/testimonial/avatar-placeholder.png', ADVANCED_GUTENBERG_PLUGIN);
-            $default_thumb      = plugins_url('assets/blocks/recent-posts/recent-post-default.png', ADVANCED_GUTENBERG_PLUGIN);
-            $image_holder       = plugins_url('assets/blocks/advimage/imageholder.svg', ADVANCED_GUTENBERG_PLUGIN);
-            $login_logo         = plugins_url('assets/blocks/login-form/login.svg', ADVANCED_GUTENBERG_PLUGIN);
-            $reg_logo           = plugins_url('assets/blocks/login-form/reg.svg', ADVANCED_GUTENBERG_PLUGIN);
-            $saved_settings     = get_option('advgb_settings');
-            $custom_styles_data = get_option('advgb_custom_styles');
-            $recaptcha_config   = get_option('advgb_recaptcha_config');
-            $recaptcha_config   = $recaptcha_config !== false ? $recaptcha_config : array('recaptcha_enable' => 0);
-            $blocks_icon_color  = isset($saved_settings['blocks_icon_color']) ? $saved_settings['blocks_icon_color'] : '';
-            $rp_default_thumb   = isset($saved_settings['rp_default_thumb']) ? $saved_settings['rp_default_thumb'] : array('url' => $default_thumb, 'id' => 0);
-            $icons              = array();
-            $icons['material']  = file_get_contents(plugin_dir_path(__DIR__) . 'assets/css/fonts/codepoints.json');
-            $icons['material']  = json_decode($icons['material'], true);
+            $avatarHolder           = plugins_url('assets/blocks/testimonial/avatar-placeholder.png', ADVANCED_GUTENBERG_PLUGIN);
+            $default_thumb          = plugins_url('assets/blocks/recent-posts/recent-post-default.png', ADVANCED_GUTENBERG_PLUGIN);
+            $image_holder           = plugins_url('assets/blocks/advimage/imageholder.svg', ADVANCED_GUTENBERG_PLUGIN);
+            $login_logo             = plugins_url('assets/blocks/login-form/login.svg', ADVANCED_GUTENBERG_PLUGIN);
+            $reg_logo               = plugins_url('assets/blocks/login-form/reg.svg', ADVANCED_GUTENBERG_PLUGIN);
+            $saved_settings         = get_option('advgb_settings');
+            $custom_styles_data     = get_option('advgb_custom_styles');
+            $recaptcha_config       = get_option('advgb_recaptcha_config');
+            $recaptcha_config       = $recaptcha_config !== false ? $recaptcha_config : array('recaptcha_enable' => 0);
+            $blocks_icon_color      = isset($saved_settings['blocks_icon_color']) ? $saved_settings['blocks_icon_color'] : '#5952de';
+            $rp_default_thumb       = isset($saved_settings['rp_default_thumb']) ? $saved_settings['rp_default_thumb'] : array('url' => $default_thumb, 'id' => 0);
+            $icons                  = array();
+            $icons['material']      = file_get_contents(plugin_dir_path(__DIR__) . 'assets/css/fonts/codepoints.json');
+            $icons['material']      = json_decode($icons['material'], true);
+            $enable_advgb_blocks    = !isset($saved_settings['enable_advgb_blocks']) || $saved_settings['enable_advgb_blocks'] ? 1 : 0;
 
             global $wp_version;
-            $blocks_widget_support = ( $wp_version >= 5.8 ) ? true : false;
+            $blocks_widget_support = ( $wp_version >= 5.8 ) ? 1 : 0;
 
             wp_localize_script('wp-blocks', 'advgbBlocks', array(
                 'color' => $blocks_icon_color,
@@ -483,6 +533,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 'iconList' => $icons,
                 'registerEnabled' => get_option('users_can_register'),
                 'blocks_widget_support' => $blocks_widget_support,
+                'enable_advgb_blocks' => $enable_advgb_blocks,
             ));
 
             // Setup default config data for blocks
@@ -499,13 +550,16 @@ if(!class_exists('AdvancedGutenbergMain')) {
         public function addEditorAndFrontendStyles()
         {
             // Load custom styles in the <head>
-            add_action('wp_head', array($this, 'loadCustomStylesFrontend'));
-            add_action('admin_head', array($this, 'loadCustomStylesAdmin'));
+            if( $this->settingIsEnabled( 'enable_custom_styles' ) ) {
+                add_action('wp_head', array($this, 'loadCustomStylesFrontend'));
+                add_action('admin_head', array($this, 'loadCustomStylesAdmin'));
+            }
+
             add_action('admin_head', array($this, 'setBlocksSpacingAdmin'));
 
             wp_enqueue_style('dashicons');
 
-            if (is_admin()) {
+            if ( is_admin() && $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
                 wp_enqueue_style(
                     'advgb_blocks_styles',
                     plugins_url('assets/css/blocks.css', dirname(__FILE__)),
@@ -526,6 +580,13 @@ if(!class_exists('AdvancedGutenbergMain')) {
                     }
                 }
             }
+
+            wp_enqueue_style(
+                'advgb_editor_styles',
+                plugins_url('assets/css/editor.css', dirname(__FILE__)),
+                array(),
+                ADVANCED_GUTENBERG_VERSION
+            );
 
             if (!function_exists('advgbAddScriptAttributes')) {
                 /**
@@ -592,6 +653,25 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 );
 
                 wp_localize_script('advgb_update_list', 'updateListNonce', array('nonce' => $advgb_nonce));
+            }
+        }
+
+        /**
+         * Unregister Table of Contents block in Widgets page
+         *
+         * @return void
+         */
+        public function advgbDisableBlocksWidgetAreas()
+        {
+            if( $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
+                wp_add_inline_script(
+                    'advgb_blocks',
+                    'wp.domReady( function () {
+                        if ( wp.data.select("core/blocks").getBlockType( "advgb/summary" ) ) {
+                            wp.blocks.unregisterBlockType( "advgb/summary" );
+                        }
+                    } );'
+                );
             }
         }
 
@@ -726,12 +806,14 @@ if(!class_exists('AdvancedGutenbergMain')) {
             $blocksListName = array();
             $savedBlocksListName = array();
 
+            // Blocks coming from Block Access admin screen form
             foreach ($blocksList as &$block) {
                 // Convert object to array
                 $block = (array)$block;
                 $blocksListName[] = $block['name'];
             }
 
+            // Blocks saved in advgb_blocks_list option
             foreach ($savedBlocksList as $block) {
                 // Convert object to array
                 $block = (array)$block;
@@ -744,29 +826,28 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 update_option('advgb_blocks_list', $blocksList);
             }
 
-            // Check that profile blocks are up to date
-            $args     = array(
-                'fields'    => 'ids',
-                'post_type' => 'advgb_profiles',
-                'publish'   => true
-            );
+            // Check that advgb_blocks_user_roles is up to date - The result of this check is not saved
+            $advgb_blocks_user_roles            = get_option( 'advgb_blocks_user_roles');
+            $advgb_blocks_user_roles_updated    = array();
 
-            $postIDs = get_posts($args);
+            foreach ( $advgb_blocks_user_roles as $role => $blocks ) {
+                if (is_array($blocks) && is_array($blocks['active_blocks']) && is_array($blocks['inactive_blocks'])) {
+                    $allAccessBlocks = array_merge($blocks['active_blocks'], $blocks['inactive_blocks']);
 
-            foreach ($postIDs as $postID) {
-                $allBlocksMeta = get_post_meta($postID, 'blocks', true);
-                if (is_array($allBlocksMeta) && is_array($allBlocksMeta['active_blocks']) && is_array($allBlocksMeta['inactive_blocks'])) {
-                    $allProfileBlocks = array_merge($allBlocksMeta['active_blocks'], $allBlocksMeta['inactive_blocks']);
-
-                    $newAllowedBlocks = array_diff($blocksListName, $allProfileBlocks);
+                    $newAllowedBlocks = array_diff($blocksListName, $allAccessBlocks);
                     $newAllowedBlocks = array_unique($newAllowedBlocks);
 
                     if ($newAllowedBlocks) {
-                        $allBlocksMeta['active_blocks'] = array_merge($allBlocksMeta['active_blocks'], $newAllowedBlocks);
-                        update_post_meta($postID, 'blocks', $allBlocksMeta);
+                        $advgb_blocks_user_roles_updated[$role]['active_blocks'] = array_merge($blocks['active_blocks'], $newAllowedBlocks);
+                        $advgb_blocks_user_roles_updated[$role]['inactive_blocks'] = $blocks['inactive_blocks'];
                     }
                 }
             }
+
+            /* We don't actually need to save the new blocks that are not detected by Access Blocks
+            if ($newAllowedBlocks) {
+                update_option( 'advgb_blocks_user_roles', $advgb_blocks_user_roles_updated );
+            }*/
 
             if ((defined('GUTENBERG_VERSION')
                 && version_compare(get_option('advgb_gutenberg_version'), GUTENBERG_VERSION, '<'))
@@ -962,7 +1043,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
             $regex = '/^[a-zA-Z0-9_\-]+$/';
             $regexWithSpaces = '/^[\p{L}\p{N}_\- ]+$/u';
 
-            if (!wp_verify_nonce($_POST['nonce'], 'advgb_settings_nonce')) {
+            if (!wp_verify_nonce($_POST['nonce'], 'advgb_cstyles_nonce')) {
                 wp_send_json(__('Invalid nonce token!', 'advanced-gutenberg'), 400);
             }
 
@@ -1016,8 +1097,8 @@ if(!class_exists('AdvancedGutenbergMain')) {
                             'id' => $new_id['id'] + 1,
                             'title' => sanitize_text_field($data['title']),
                             'name' => sanitize_text_field($data['name']),
-                            'css' => $data['css'],
-                            'identifyColor' => $data['identifyColor'],
+                            'css' => wp_strip_all_tags($data['css']),
+                            'identifyColor' => sanitize_hex_color($data['identifyColor']),
                         );
 
                         array_push($new_style_copied_array, $copied_styles);
@@ -1045,8 +1126,8 @@ if(!class_exists('AdvancedGutenbergMain')) {
             } elseif ($task === 'style_save') {
                 $style_id = (int)$_POST['id'];
                 $new_classname = sanitize_text_field($_POST['name']);
-                $new_identify_color = sanitize_text_field($_POST['mycolor']);
-                $new_css = $_POST['mycss'];
+                $new_identify_color = sanitize_hex_color($_POST['mycolor']);
+                $new_css = wp_strip_all_tags($_POST['mycss']);
                 // Validate new name
                 if (!preg_match($regex, $new_classname)) {
                     wp_send_json('Invalid characters, please enter another!', 403);
@@ -1184,6 +1265,15 @@ if(!class_exists('AdvancedGutenbergMain')) {
          */
         public function saveContactFormData()
         {
+            // Don't save if Settings > PublishPress Blocks are disabled
+            if( !$this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
+                return false;
+            }
+
+            if (!wp_verify_nonce($_POST['nonce'], 'advgb_blockform_nonce_field')) {
+                wp_send_json(__('Invalid nonce token!', 'advanced-gutenberg'), 400);
+            }
+
             // phpcs:disable -- WordPress.Security.NonceVerification.Recommended - frontend form, no nonce
             if (!isset($_POST['action'])) {
                 wp_send_json(__('Bad Request!', 'advanced-gutenberg'), 400);
@@ -1258,6 +1348,15 @@ if(!class_exists('AdvancedGutenbergMain')) {
          */
         public function saveNewsletterData()
         {
+            // Don't save if Settings > PublishPress Blocks are disabled
+            if( !$this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
+                return false;
+            }
+
+            if (!wp_verify_nonce($_POST['nonce'], 'advgb_blockform_nonce_field')) {
+                wp_send_json(__('Invalid nonce token!', 'advanced-gutenberg'), 400);
+            }
+
             // phpcs:disable -- WordPress.Security.NonceVerification.Recommended - frontend form, no nonce
             if (!isset($_POST['action'])) {
                 wp_send_json(__('Bad Request!', 'advanced-gutenberg'), 400);
@@ -1429,6 +1528,12 @@ if(!class_exists('AdvancedGutenbergMain')) {
                       array(),
                       ADVANCED_GUTENBERG_VERSION
                   );
+                  wp_enqueue_style(
+                      'advgb_pro_admin_popup',
+                      plugins_url('assets/css/pro-popup.css', dirname(__FILE__)),
+                      array(),
+                      ADVANCED_GUTENBERG_VERSION
+                  );
                   wp_enqueue_script(
                       'advgb_top_notice_js',
                       plugins_url('assets/js/top-notice.js', dirname(__FILE__)),
@@ -1457,9 +1562,21 @@ if(!class_exists('AdvancedGutenbergMain')) {
                     ADVANCED_GUTENBERG_VERSION
                 );
                 wp_register_script(
+                    'advgb_block_access_js',
+                    plugins_url('assets/js/block-access.js', dirname(__FILE__)),
+                    array(),
+                    ADVANCED_GUTENBERG_VERSION
+                );
+                wp_register_script(
                     'advgb_settings_js',
                     plugins_url('assets/js/settings.js', dirname(__FILE__)),
                     array('wp-i18n'),
+                    ADVANCED_GUTENBERG_VERSION
+                );
+                wp_register_script(
+                    'advgb_custom_styles_js',
+                    plugins_url('assets/js/custom-styles.js', dirname(__FILE__)),
+                    array(),
                     ADVANCED_GUTENBERG_VERSION
                 );
                 wp_register_script(
@@ -1535,11 +1652,18 @@ if(!class_exists('AdvancedGutenbergMain')) {
                     ADVANCED_GUTENBERG_VERSION
                 );
 
+                /*/ Pro
+                if(defined('ADVANCED_GUTENBERG_PRO')) {
+                    if ( method_exists( 'PPB_AdvancedGutenbergPro\Utils\Definitions', 'advgb_pro_register_scripts_admin' ) ) {
+                        PPB_AdvancedGutenbergPro\Utils\Definitions::advgb_pro_register_scripts_admin();
+                    }
+                }*/
+
                 $saved_settings = get_option('advgb_settings');
                 if (isset($saved_settings['editor_width']) && $saved_settings['editor_width']) {
                     wp_add_inline_style(
                         'dashicons',
-                        'body:not(.advgb-editor-width-default) #editor .edit-post-visual-editor__post-title-wrapper > .wp-block,body:not(.advgb-editor-width-default) #editor .block-editor-writing-flow > .block-editor-block-list__layout > .wp-block{max-width:' . $saved_settings['editor_width'] . '%;width:' . $saved_settings['editor_width'] . '%;margin:0 auto}'
+                        'body:not(.advgb-editor-width-default) #editor .edit-post-visual-editor__post-title-wrapper > .wp-block,body:not(.advgb-editor-width-default) #editor .block-editor-writing-flow > .block-editor-block-list__layout > .wp-block{max-width:' . $saved_settings['editor_width'] . '%;width:' . $saved_settings['editor_width'] . '%;margin-left:auto;margin-right:auto}'
                     );
                 }
             }
@@ -1552,17 +1676,19 @@ if(!class_exists('AdvancedGutenbergMain')) {
          */
         public function registerStylesScriptsFrontend()
         {
-            wp_register_script(
-                'advgb_blocks_frontend_scripts',
-                plugins_url('assets/blocks/frontend.js', dirname(__FILE__)),
-                array(),
-                ADVANCED_GUTENBERG_VERSION
-            );
+            if( $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
+                wp_register_script(
+                    'advgb_blocks_frontend_scripts',
+                    plugins_url('assets/blocks/frontend.js', dirname(__FILE__)),
+                    array(),
+                    ADVANCED_GUTENBERG_VERSION
+                );
 
-            // Pro
-            if(defined('ADVANCED_GUTENBERG_PRO')) {
-                if ( method_exists( 'PPB_AdvancedGutenbergPro\Utils\Definitions', 'advgb_pro_register_scripts_frontend' ) ) {
-                    PPB_AdvancedGutenbergPro\Utils\Definitions::advgb_pro_register_scripts_frontend();
+                // Pro
+                if( defined( 'ADVANCED_GUTENBERG_PRO' ) ) {
+                    if ( method_exists( 'PPB_AdvancedGutenbergPro\Utils\Definitions', 'advgb_pro_register_scripts_frontend' ) ) {
+                        PPB_AdvancedGutenbergPro\Utils\Definitions::advgb_pro_register_scripts_frontend();
+                    }
                 }
             }
 
@@ -1588,18 +1714,21 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 'material_icon_font_custom',
                 plugins_url('assets/css/fonts/material-icons-custom.min.css', dirname(__FILE__))
             );
-            wp_register_style(
-                'advgb_columns_styles',
-                plugins_url('assets/css/columns.css', dirname(__FILE__)),
-                array(),
-                ADVANCED_GUTENBERG_VERSION
-            );
-            wp_register_style(
-                'advgb_recent_posts_styles',
-                plugins_url('assets/css/recent-posts.css', dirname(__FILE__)),
-                array(),
-                ADVANCED_GUTENBERG_VERSION
-            );
+
+            if( $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
+                wp_register_style(
+                    'advgb_columns_styles',
+                    plugins_url('assets/css/columns.css', dirname(__FILE__)),
+                    array(),
+                    ADVANCED_GUTENBERG_VERSION
+                );
+                wp_register_style(
+                    'advgb_recent_posts_styles',
+                    plugins_url('assets/css/recent-posts.css', dirname(__FILE__)),
+                    array(),
+                    ADVANCED_GUTENBERG_VERSION
+                );
+            }
 
             wp_register_script(
                 'colorbox_js',
@@ -1728,13 +1857,26 @@ if(!class_exists('AdvancedGutenbergMain')) {
         }
 
         /**
+         * Get Global Columns Visual Guide
+         *
+         * @param int $value Columns Visual Guide check
+         *
+         * @return string
+         */
+        public function getAdvgbColsVisualGuideGlobal( $value ) {
+            return ( isset($value) && ($value == 0) ) ? 'disable' : 'enable';
+        }
+
+        /**
          * Set body classes for Editor width and Columns visual guide
          *
          * @param string $classes CSS class from body
          */
         public function setAdvgEditorBodyClassses( $classes ) {
 
-            if ('post' == get_current_screen()->base) {
+            $saved_settings = get_option('advgb_settings');
+
+            if ('post' === get_current_screen()->base) {
                 $saved_settings     = get_option('advgb_settings');
                 global $post;
                 $editorWidth        = get_post_meta($post->ID, 'advgb_blocks_editor_width', true);
@@ -1745,12 +1887,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
                     )
                     ? $this->getAdvgbEditorWidth( $saved_settings['editor_width'] )
                     : 'default';
-                $editorColsVGGlobal = (
-                        isset($saved_settings['enable_columns_visual_guide'])
-                        && ($saved_settings['enable_columns_visual_guide'] == 0)
-                    )
-                    ? 'disable'
-                    : 'enable';
+                $editorColsVGGlobal = $this->getAdvgbColsVisualGuideGlobal( $saved_settings['enable_columns_visual_guide'] );
 
                 // Editor width
                 if(isset($editorWidth) && !empty($editorWidth)) {
@@ -1772,7 +1909,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
 
                 // Global settings as javascript variables
                 wp_localize_script(
-                    'advgb_blocks',
+                    'wp-blocks',
                     'advg_settings',
                     [
                         'editor_width_global'                   => $editorWidthGlobal,
@@ -1781,6 +1918,10 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 );
 
                 return $classes;
+            } elseif ( 'widgets' === get_current_screen()->id ) {
+                // Use global Columns Visual Guide in Appearance > Widgets
+                $editorColsVGGlobal = $this->getAdvgbColsVisualGuideGlobal( $saved_settings['enable_columns_visual_guide'] );
+                $classes .= ' advgb-editor-col-guide-' . $editorColsVGGlobal;
             }
             return $classes;
         }
@@ -1832,13 +1973,13 @@ if(!class_exists('AdvancedGutenbergMain')) {
          */
         public function saveAdvgbData()
         {
-            if (isset($_GET['view']) && $_GET['view'] === 'profile' && !isset($_GET['id'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- redirect only
-                wp_safe_redirect(admin_url('admin.php?page=advgb_main&view=profiles'));
+            if (!current_user_can('activate_plugins')) {
+                return false;
             }
 
-            if (isset($_POST['advgb_profile_save'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- we check nonce below
-                $this->saveAdvgbProfile();
-            } elseif (isset($_POST['save_settings']) || isset($_POST['save_custom_styles'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- we check nonce below
+            if( isset($_POST['advgb_block_access_save']) ) {
+                $this->saveAdvgbBlockAccess();
+            }  elseif (isset($_POST['save_settings']) || isset($_POST['save_custom_styles'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- we check nonce below
                 $this->saveSettings();
             } elseif (isset($_POST['save_email_config'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- we check nonce below
                 $this->saveEmailSettings();
@@ -1888,14 +2029,40 @@ if(!class_exists('AdvancedGutenbergMain')) {
                     $save_config['enable_columns_visual_guide'] = 0;
                 }
 
-                $save_config['gallery_lightbox_caption'] = $_POST['gallery_lightbox_caption'];
-                $save_config['google_api_key'] = $_POST['google_api_key'];
-                $save_config['blocks_spacing'] = $_POST['blocks_spacing'];
-                $save_config['blocks_icon_color'] = $_POST['blocks_icon_color'];
-                $save_config['editor_width'] = $_POST['editor_width'];
+                if (isset($_POST['enable_block_access'])) {
+                    $save_config['enable_block_access'] = 1;
+                } else {
+                    $save_config['enable_block_access'] = 0;
+                }
+
+                if (isset($_POST['enable_custom_styles'])) {
+                    $save_config['enable_custom_styles'] = 1;
+                } else {
+                    $save_config['enable_custom_styles'] = 0;
+                }
+
+                if (isset($_POST['enable_advgb_blocks'])) {
+                    $save_config['enable_advgb_blocks'] = 1;
+                } else {
+                    $save_config['enable_advgb_blocks'] = 0;
+                }
+
+                // Pro
+                if(defined('ADVANCED_GUTENBERG_PRO')) {
+                    if ( method_exists( 'PPB_AdvancedGutenbergPro\Utils\Definitions', 'advgb_pro_setting_set_value' ) ) {
+                        // Display branding
+                        $save_config['enable_pp_branding'] = PPB_AdvancedGutenbergPro\Utils\Definitions::advgb_pro_setting_set_value( 'enable_pp_branding' );
+                    }
+                }
+
+                $save_config['gallery_lightbox_caption'] = (int) $_POST['gallery_lightbox_caption'];
+                $save_config['google_api_key'] = sanitize_text_field($_POST['google_api_key']);
+                $save_config['blocks_spacing'] = (int) $_POST['blocks_spacing'];
+                $save_config['blocks_icon_color'] = sanitize_hex_color($_POST['blocks_icon_color']);
+                $save_config['editor_width'] = sanitize_text_field($_POST['editor_width']);
                 $save_config['rp_default_thumb'] = array(
-                    'url' => $_POST['post_default_thumb'],
-                    'id'  => $_POST['post_default_thumb_id']
+                    'url' => esc_url_raw($_POST['post_default_thumb']),
+                    'id'  => (int) $_POST['post_default_thumb_id']
                 );
 
                 update_option('advgb_settings', $save_config);
@@ -1997,78 +2164,81 @@ if(!class_exists('AdvancedGutenbergMain')) {
         }
 
         /**
-         * Save profiles settings
+         * Save block access by user role
          *
-         * @return mixed
+         * @return void
          */
-        public function saveAdvgbProfile()
-        {
+        public function saveAdvgbBlockAccess() {
+
             // Check nonce field exist
-            if (!isset($_POST['advgb_nonce_field'])) {
+            if ( !isset( $_POST['advgb_nonce_field'] ) ) {
                 return false;
             }
             // Verify nonce
-            if (!wp_verify_nonce($_POST['advgb_nonce_field'], 'advgb_nonce')) {
+            if ( !wp_verify_nonce( $_POST['advgb_nonce_field'], 'advgb_nonce' ) ) {
                 return false;
             }
 
-            $postID = $_POST['advgb_profile_id'];
-
-            // Save profile settings
-            if (current_user_can('publish_posts')) {
-                // Get list of active blocks
-                $active_blocks = array();
-                $inactive_blocks = array();
-                if (isset($_POST['active_blocks'])) {
-                    $blocks_list = json_decode(stripslashes($_POST['blocks_list']));
-                    $active_blocks = $_POST['active_blocks'];
-                    $inactive_blocks = array_values(array_diff($blocks_list, $active_blocks));
-                }
-
-                // Get users permission
-                $users_access = array();
-                $roles_access = array();
-                if (isset($_POST['advgb-users-access-list'])) {
-                    $users_access = trim($_POST['advgb-users-access-list']);
-                    $users_access = explode(' ', $users_access);
-                }
-                if (isset($_POST['advgb-roles'])) {
-                    $roles_access = $_POST['advgb-roles'];
-                }
-
-                // Get new profile title
-                $post_title = trim($_POST['advgb_profile_title']);
-
-                // Save data
-                if ($postID !== 'new') { // Update profile if have post ID
-                    if (!current_user_can('edit_post', $postID)) {
-                        return false;
-                    }
-
-                    update_post_meta($postID, 'blocks', array('active_blocks'=>$active_blocks, 'inactive_blocks'=>$inactive_blocks));
-                    update_post_meta($postID, 'users_access', $users_access);
-                    update_post_meta($postID, 'roles_access', $roles_access);
-                    wp_update_post(array(
-                        'ID' => $postID,
-                        'post_title' => $post_title,
-                    ));
-                } else { // Create new profile
-                    $postID = wp_insert_post(array(
-                        'post_title'  => $post_title,
-                        'post_type'   => 'advgb_profiles',
-                        'post_status' => 'publish',
-                        'meta_input'  => array(
-                            'blocks' => array('active_blocks'=>$active_blocks, 'inactive_blocks'=>$inactive_blocks),
-                            'roles_access'  => $roles_access,
-                            'users_access'  => $users_access,
-                        )
-                    ));
-                }
-
-                wp_safe_redirect(admin_url('admin.php?page=advgb_main&view=profile&id=' . $postID . '&save_profile=success'));
+            if ( !current_user_can( 'administrator' ) ) {
+                return false;
             }
 
-            return $postID;
+            /* Get blocks array.
+             * If 'blocks' doesn't exist (because advgb_blocks_list option is still not saved),
+             * redirect to error page and skip saving.
+             */
+            if( isset($_POST['blocks']) && is_array($_POST['blocks']) ) {
+                $blocks = array_map('sanitize_text_field', $_POST['blocks']);
+            } else {
+                wp_safe_redirect( admin_url( 'admin.php?page=advgb_main&view=block-access&user_role=' . $user_role . '&save_access=error' ) );
+                exit;
+            }
+
+            $user_role         = sanitize_text_field($_POST['user_role']);
+            $active_blocks     = array();
+            $inactive_blocks   = array();
+
+            if ( isset( $blocks ) && !empty( $blocks ) && isset( $user_role ) && !empty( $user_role ) ) {
+
+                /* Blocks saved in advgb_blocks_list but not listed in Block Access page
+                 * due their categories are not detected
+                 */
+                $blocks_list_undetected = (
+                    isset($_POST['blocks_list_undetected']) && is_array($_POST['blocks_list_undetected']) ? array_map('sanitize_text_field', $_POST['blocks_list_undetected']) : ''
+                );
+
+                /* Get all the blocks we can manage (which category is detected).
+                 * If 'blocks_list' doesn't exist (because advgb_blocks_list option is still not saved),
+                 * redirect to error page and skip saving.
+                 */
+                if( isset($_POST['blocks_list']) && is_array($_POST['blocks_list']) ) {
+                    $blocks_list = array_map('sanitize_text_field', $_POST['blocks_list']);
+                } else {
+                    wp_safe_redirect( admin_url( 'admin.php?page=advgb_main&view=block-access&user_role=' . $user_role . '&save_access=error' ) );
+                    exit;
+                }
+
+                if( $blocks_list_undetected && is_array( $blocks_list_undetected ) ) {
+                    // Merge active blocks with the ones we can't manage
+                    $active_blocks = array_merge( $blocks, $blocks_list_undetected );
+                } else {
+                    $active_blocks = $blocks;
+                }
+
+                // Inactive blocks
+                $inactive_blocks = array_unique( array_values( array_diff( $blocks_list, $active_blocks ) ) );
+
+                // Define active and inactive blocks
+                $block_access_by_role                                  = get_option( 'advgb_blocks_user_roles');
+                $block_access_by_role[$user_role]['active_blocks']     = isset( $active_blocks ) ? $active_blocks : '';
+                $block_access_by_role[$user_role]['inactive_blocks']   = isset( $inactive_blocks ) ? $inactive_blocks : '';
+
+                update_option( 'advgb_blocks_user_roles', $block_access_by_role );
+
+                wp_safe_redirect( admin_url( 'admin.php?page=advgb_main&view=block-access&user_role=' . $user_role . '&save_access=success' ) );
+            } else {
+                wp_safe_redirect( admin_url( 'admin.php?page=advgb_main&view=block-access&user_role=' . $user_role . '&save_access=error' ) );
+            }
         }
 
         /**
@@ -2186,10 +2356,10 @@ if(!class_exists('AdvancedGutenbergMain')) {
             }
 
             $save_config = array();
-            $save_config['contact_form_sender_name'] = $_POST['contact_form_sender_name'];
-            $save_config['contact_form_sender_email'] = $_POST['contact_form_sender_email'];
-            $save_config['contact_form_email_title'] = $_POST['contact_form_email_title'];
-            $save_config['contact_form_email_receiver'] = $_POST['contact_form_email_receiver'];
+            $save_config['contact_form_sender_name'] = sanitize_text_field($_POST['contact_form_sender_name']);
+            $save_config['contact_form_sender_email'] = sanitize_email($_POST['contact_form_sender_email']);
+            $save_config['contact_form_email_title'] = sanitize_text_field($_POST['contact_form_email_title']);
+            $save_config['contact_form_email_receiver'] = sanitize_email($_POST['contact_form_email_receiver']);
 
             update_option('advgb_email_sender', $save_config);
 
@@ -2220,10 +2390,10 @@ if(!class_exists('AdvancedGutenbergMain')) {
             } else {
                 $save_config['recaptcha_enable'] = 0;
             }
-            $save_config['recaptcha_site_key'] = $_POST['recaptcha_site_key'];
-            $save_config['recaptcha_secret_key'] = $_POST['recaptcha_secret_key'];
-            $save_config['recaptcha_language'] = $_POST['recaptcha_language'];
-            $save_config['recaptcha_theme'] = $_POST['recaptcha_theme'];
+            $save_config['recaptcha_site_key'] = sanitize_text_field($_POST['recaptcha_site_key']);
+            $save_config['recaptcha_secret_key'] = sanitize_text_field($_POST['recaptcha_secret_key']);
+            $save_config['recaptcha_language'] = sanitize_text_field($_POST['recaptcha_language']);
+            $save_config['recaptcha_theme'] = sanitize_text_field($_POST['recaptcha_theme']);
 
             update_option('advgb_recaptcha_config', $save_config);
 
@@ -2234,7 +2404,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
         }
 
         /**
-         * Retrieve the active and inactive blocks for users regard to PublishPress Blocks profiles
+         * Retrieve the active and inactive blocks for users regard to PublishPress Blocks access
          *
          * @return array
          */
@@ -2242,54 +2412,24 @@ if(!class_exists('AdvancedGutenbergMain')) {
         {
             // Get user info
             $current_user      = wp_get_current_user();
-            $current_user_id   = $current_user->ID;
+            //$current_user_id   = $current_user->ID;
             $current_user_role = $current_user->roles[0];
 
-            // Check if we are in profile view
-            if (isset($_GET['page']) && isset($_GET['view']) && $_GET['page'] === 'advgb_main' && $_GET['view'] === 'profile' ) { // phpcs:ignore -- WordPress.Security.NonceVerification.Recommended - view only
-                $postID = $_GET['id']; // phpcs:ignore -- WordPress.Security.NonceVerification.Recommended - view only
-                $blocks_saved  = get_post_meta($postID, 'blocks', true);
-                if (!is_array($blocks_saved)) {
-                    return array('active_blocks'=>array(), 'inactive_blocks'=>array());
-                }
+            // All saved blocks (even the ones not detected by Block Access)
+            $all_blocks = get_option( 'advgb_blocks_list' );
 
-                // Return allowed blocks
-                return $blocks_saved;
+            // Get the array from advgb_blocks_user_roles option that match current user role
+            if( get_option('advgb_blocks_user_roles') ) {
+                $advgb_blocks_user_roles = !empty( get_option('advgb_blocks_user_roles') ) ? get_option( 'advgb_blocks_user_roles' ) : [];
+                $advgb_blocks_user_roles = array_key_exists( $current_user_role, $advgb_blocks_user_roles ) ? (array)$advgb_blocks_user_roles[$current_user_role] : [];
+
+                // Include the blocks stored in advgb_blocks_list option but not detected by Block Access
+                //$advgb_blocks_user_roles = array_key_exists( $current_user_role, $advgb_blocks_user_roles ) ? (array)$advgb_blocks_user_roles[$current_user_role] : [];
+
+                return $advgb_blocks_user_roles;
             }
 
-            // Get all GB-ADV active profiles
-            global $wpdb;
-            $profiles = $wpdb->get_results('SELECT * FROM '. $wpdb->prefix. 'posts
-             WHERE post_type="advgb_profiles" AND post_status="publish" ORDER BY post_date_gmt DESC');
-
-            if (!empty($profiles)) {
-                foreach ($profiles as $profile) {
-                    $postID           = $profile->ID;
-                    $user_id_access   = get_post_meta($postID, 'users_access', true);
-                    $user_role_access = get_post_meta($postID, 'roles_access', true);
-
-                    // Check which profiles that current user has permission to use and take that ID
-                    // the ID of the profiles published most recently will be taken
-                    if (is_array($user_role_access) && is_array($user_id_access)) {
-                        if (in_array($current_user_id, $user_id_access)
-                            || in_array($current_user_role, $user_role_access)) {
-                            // Populate the ID
-                            $this->active_profile = $postID;
-                            $blocks_saved  = get_post_meta($this->active_profile, 'blocks', true);
-
-                            if (!is_array($blocks_saved)) {
-                                return array('active_blocks'=>array(), 'inactive_blocks'=>array());
-                            }
-
-                            // Return allowed blocks
-                            return $blocks_saved;
-                        }
-                    }
-                }
-            }
-
-            // If user is not in any block then allow all blocks
-            $all_blocks = get_option('advgb_blocks_list');
+            // If advgb_blocks_user_roles option doesn't exists, then allow all blocks
             if (!is_array($all_blocks)) {
                 $all_blocks = array();
             } else {
@@ -2297,7 +2437,10 @@ if(!class_exists('AdvancedGutenbergMain')) {
                     $all_blocks[$block_key] = $all_blocks[$block_key]['name'];
                 }
             }
-            return array('active_blocks'=>$all_blocks, 'inactive_blocks'=>array());
+            return array(
+                'active_blocks' => $all_blocks,
+                'inactive_blocks' => array()
+            );
         }
 
         /**
@@ -2816,7 +2959,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
                             array(
                                 'title' => __('Text Size', 'advanced-gutenberg'),
                                 'type'  => 'number',
-                                'name'  => 'textSize',
+                                'name'  => 'fontSize',
                                 'min'   => 10,
                                 'max'   => 100,
                             ),
@@ -4604,6 +4747,24 @@ if(!class_exists('AdvancedGutenbergMain')) {
         }
 
         /**
+         * Add nonce to blocks with form tag
+         *
+         * @param string $content Post content
+         *
+         * @return string
+         */
+        public function addNonceToFormBlocks($content)
+        {
+            $content = str_replace(
+                '<div class="advgb-form-submit-wrapper"',
+                '<input type="hidden" name="advgb_blockform_nonce_field" value="' . wp_create_nonce('advgb_blockform_nonce_field') . '"><div class="advgb-form-submit-wrapper"',
+                $content
+            );
+
+            return $content;
+        }
+
+        /**
          * Load assets for post/page on front-end after gutenberg rendering
          *
          * @param string $content Post content
@@ -4669,7 +4830,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 );
 
                 // Pro
-                if(defined('ADVANCED_GUTENBERG_PRO')) {
+                if( defined( 'ADVANCED_GUTENBERG_PRO' ) && $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
                     if ( method_exists( 'PPB_AdvancedGutenbergPro\Utils\Definitions', 'advgb_pro_widgets_customizer_frontend' ) ) {
                         PPB_AdvancedGutenbergPro\Utils\Definitions::advgb_pro_widgets_customizer_frontend();
                     }
@@ -4680,9 +4841,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
             }
 
             if (strpos($content, 'wp-block-gallery') !== false) {
-                if (!$saved_settings) {
-                    $saved_settings = get_option('advgb_settings');
-                }
+                $saved_settings = get_option('advgb_settings');
 
                 if ($saved_settings['gallery_lightbox']) {
                     wp_enqueue_style('colorbox_style');
@@ -4911,7 +5070,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
                 wp_enqueue_script(
                     'advgbNewsletter_js',
                     plugins_url('assets/blocks/newsletter/frontend.js', dirname(__FILE__)),
-                    array('jquery'),
+                    array('jquery', 'wp-i18n'),
                     ADVANCED_GUTENBERG_VERSION
                 );
                 wp_localize_script('advgbNewsletter_js', 'advgbNewsletter', array('ajax_url' => admin_url('admin-ajax.php')));
@@ -4969,7 +5128,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
             }
 
             // Pro
-            if(defined('ADVANCED_GUTENBERG_PRO')) {
+            if( defined( 'ADVANCED_GUTENBERG_PRO' ) && $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
                 if ( method_exists( 'PPB_AdvancedGutenbergPro\Utils\Definitions', 'advgb_pro_enqueue_scripts_frontend' ) ) {
                     PPB_AdvancedGutenbergPro\Utils\Definitions::advgb_pro_enqueue_scripts_frontend($content);
                 }
@@ -5224,6 +5383,22 @@ if(!class_exists('AdvancedGutenbergMain')) {
         }
 
         /**
+         * Check if a setting is enabled
+         *
+         * @param string $setting The setting from advgb_settings option field
+         *
+         * @return boolean
+         */
+        public function settingIsEnabled( $setting ) {
+            $saved_settings = get_option('advgb_settings');
+            if( !isset($saved_settings[$setting]) || $saved_settings[$setting] ) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /**
          * Set value to config field
          *
          * @param array  $valueList  Array of values to set
@@ -5297,7 +5472,7 @@ if(!class_exists('AdvancedGutenbergMain')) {
             }
 
             // Load common CSS
-            if (in_array($blockName, $availableBlocks)) {
+            if ( in_array( $blockName, $availableBlocks ) && $this->settingIsEnabled( 'enable_advgb_blocks' ) ) {
                 wp_enqueue_style(
                     'advgb_blocks_styles',
                     plugins_url('assets/css/blocks.css', dirname(__FILE__)),

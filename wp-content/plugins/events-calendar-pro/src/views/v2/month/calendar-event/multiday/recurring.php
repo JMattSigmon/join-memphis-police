@@ -19,14 +19,18 @@
  * @version 5.7.0
  */
 
-if (empty($event->recurring)) {
-    return;
+if ( empty( $event->recurring ) ) {
+	return;
 }
 ?>
-<a href="<?php echo esc_url($event->permalink_all); ?>"
-    class="tribe-events-calendar-month__calendar-event-multiday-recurring-link">
-    <em class="tribe-events-calendar-month__calendar-event-multiday-recurring-icon"
-        title="<?php esc_attr_e('Recurring', 'tribe-events-calendar-pro') ?>">
-        <?php $this->template('components/icons/recurring', [ 'classes' => [ 'tribe-events-calendar-month__calendar-event-datetime-recurring-icon-svg' ] ]); ?>
-    </em>
+<a
+	href="<?php echo esc_url( $event->permalink_all ); ?>"
+	class="tribe-events-calendar-month__calendar-event-multiday-recurring-link"
+>
+	<em
+		class="tribe-events-calendar-month__calendar-event-multiday-recurring-icon"
+		title="<?php esc_attr_e( 'Recurring', 'tribe-events-calendar-pro' ) ?>"
+	>
+		<?php $this->template( 'components/icons/recurring', [ 'classes' => [ 'tribe-events-calendar-month__calendar-event-datetime-recurring-icon-svg' ] ] ); ?>
+	</em>
 </a>

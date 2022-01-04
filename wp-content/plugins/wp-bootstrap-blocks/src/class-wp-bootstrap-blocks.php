@@ -33,7 +33,7 @@ class WP_Bootstrap_Blocks {
 	 *
 	 * @var string
 	 */
-	public static $version = '3.3.1';
+	public static $version = '4.0.0';
 
 	/**
 	 * The plugin token.
@@ -181,15 +181,13 @@ class WP_Bootstrap_Blocks {
 
 		$index_dependencies = isset( $index_asset['dependencies'] ) ? $index_asset['dependencies'] : array();
 		global $wp_version;
-		if ( version_compare( $wp_version, '5.2', '<' ) ) {
-			// We have to filter out the dependency to 'wp-block-editor' since it's not available in WordPress 5.1 and older.
-			$index_dependencies = array_filter(
-				$index_dependencies,
-				function ( $dependency ) {
-					return 'wp-block-editor' !== $dependency;
-				}
-			);
-		}
+		$wp_editor_dependency_to_remove = version_compare( $wp_version, '5.2', '<' ) ? 'wp-block-editor' : 'wp-editor';
+		$index_dependencies = array_filter(
+			$index_dependencies,
+			function ( $dependency ) use ( $wp_editor_dependency_to_remove ) {
+				return $wp_editor_dependency_to_remove !== $dependency;
+			}
+		);
 
 		$index_version = isset( $index_asset['version'] ) ? $index_asset['version'] : filemtime( $index_path );
 
@@ -207,6 +205,7 @@ class WP_Bootstrap_Blocks {
 			array(
 				'bootstrapVersion' => Settings::get_bootstrap_version(),
 				'isBootstrap5Active' => Settings::is_bootstrap_5_active(),
+				'isCssGridEnabled' => Settings::is_css_grid_enabled(),
 			)
 		);
 
