@@ -16,7 +16,7 @@ get_header();
 get_template_part('partials/template-part', 'head');
 
 echo '<article class="single-post-article">';
-echo '<section class="container-xxl single-post">';
+echo '<section class="container single-post py-5">';
 
 // WordPress Loop
 if (have_posts()) : while (have_posts()) : the_post();

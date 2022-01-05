@@ -96,6 +96,15 @@ if (!is_front_page()) {
     }
 
     echo '</h1>';
+
+    // If is single post add meta info
+    if (is_single()) {
+        echo '<address class="post-meta slide-right">';
+        echo '<h3>Posted on <span class="date">' .get_the_date(). '</span> in ';
+        echo '<span class="category">' .the_category(', '). '</span></h3>';
+        echo '</address>';
+    }
+        
     echo '</header>'; // .container
     echo '</section>'; // .page-hero
 }
