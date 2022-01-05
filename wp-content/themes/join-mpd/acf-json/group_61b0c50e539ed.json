@@ -1,0 +1,49 @@
+{
+    "key": "group_61b0c50e539ed",
+    "title": "Default Blog Thumbnail",
+    "fields": [
+        {
+            "key": "field_61b0c52514bb4",
+            "label": "Default Blog Thumbnail",
+            "name": "default_blog_thumbnail",
+            "type": "image",
+            "instructions": "This will be the default thumbnail for a blog post on the Latest News page if no Featured Image is selected.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "id",
+            "preview_size": "thumbnail",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "acf-options-logo"
+            }
+        ]
+    ],
+    "menu_order": 2,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1641394260
+}

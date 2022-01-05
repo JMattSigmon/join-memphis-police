@@ -120,16 +120,6 @@ add_image_size('full-width', 1920, 1080, false);
 
 
 //--------------------------------------
-// Add Favicon Here
-//--------------------------------------
-
-function mpd_add_theme_favicon()
-{
-    echo '<link rel="shortcut icon" href="' . get_template_directory_uri() . '/assets/images/favicon.png" >';
-}
-add_action('wp_head', 'mpd_add_theme_favicon');//Custom Favicon
-
-//--------------------------------------
 // Change Default Image Attachment to None
 //--------------------------------------
 
@@ -313,6 +303,20 @@ function mpd_excerpt($num)
     echo $excerpt;
     echo '</p>';
 }
+
+//--------------
+// Add Favicon
+//--------------
+
+
+function mpd_add_theme_favicon()
+{
+    $fav = get_field('site_favicon', 'option') ?: '' . get_template_directory_uri() . '/assets/images/favicon.png"';
+
+    echo '<link rel="shortcut icon" href="' .$fav. '">';
+}
+add_action('wp_head', 'mpd_add_theme_favicon');//Custom Favicon
+
 
 //-----------------
 // Add Pagination

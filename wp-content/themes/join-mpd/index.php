@@ -30,11 +30,14 @@ if ($post_query->have_posts()) : while ($post_query->have_posts()) : $post_query
     $defaultOG = get_template_directory_uri() . '/assets/images/mas-logo-square-thumb.jpg';
     $default = wp_normalize_path($defaultOG);
 
+    // Thumnail size
+    $size = 'large';
+
     // Default thumbnail Selected in Theme Options
     $acfThumb = get_field('default_blog_thumbnail', 'option');
 
     // Featured image for post
-    $thumb = get_the_post_thumbnail_url($post->ID, 'thumbnail');
+    $thumb = get_the_post_thumbnail_url($post->ID, $size);
 
     echo '<section class="post-excerpt container">';
 
@@ -45,7 +48,7 @@ if ($post_query->have_posts()) : while ($post_query->have_posts()) : $post_query
     if ($thumb) {
         echo '<img src="' .$thumb. '">';
     } elseif ($acfThumb) {
-        echo wp_get_attachment_image($acfThumb, 'thumbnail');
+        echo wp_get_attachment_image($acfThumb, $size);
     } elseif ($default) {
         echo '<img src="' .$default. '">';
     }
