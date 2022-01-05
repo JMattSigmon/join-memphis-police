@@ -296,3 +296,40 @@ function mpd_acf_svg_helper($field)
             }
     }
 }
+
+//------------------------------
+// Add Read More Tag to Excerpt
+//------------------------------
+
+
+function mpd_excerpt($num)
+{
+    global $post;
+    $limit = $num+1;
+    $excerpt = explode(' ', get_the_excerpt(), $limit);
+    array_pop($excerpt);
+    $excerpt = implode(" ", $excerpt).'...<a class="moretag" href="' .get_permalink($post->ID) . ' ">Read More <i class="fas fa-chevron-right"></i></a>';
+    echo '<p>';
+    echo $excerpt;
+    echo '</p>';
+}
+
+//-----------------
+// Add Pagination
+//-----------------
+
+
+function mpd_theme_pagination()
+{
+    global $postslist;
+    $big = 999999999;
+    echo '<div class="page-nav py-5">';
+    echo paginate_links(
+        array(
+            'base' => str_replace($big, '%#%', get_pagenum_link($big)),
+            'format' => '%#%',
+            'current' => max(1, get_query_var('paged'))
+        )
+    );
+    echo '</div>';
+}
