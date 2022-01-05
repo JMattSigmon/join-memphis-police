@@ -76,11 +76,30 @@ if (!is_front_page()) {
     echo '">';
     echo '<header class="container">';
     echo '<h1>';
-    the_title();
+
+    // If the is blogroll
+    if (is_home()) {
+        single_post_title();
+    }
+    // If Category
+    if (is_category()) {
+        single_cat_title();
+    }
+    // If Single Post
+    if (is_single()) {
+        echo get_the_title();
+    }
+    
+    // If it's not any page related to the blog show this...
+    if (!(is_blog())) {
+        echo get_the_title();
+    }
+
     echo '</h1>';
-    echo '</header>';
-    echo '</section>';
+    echo '</header>'; // .container
+    echo '</section>'; // .page-hero
 }
+
 
 echo '</header>'; // #header-container
 
