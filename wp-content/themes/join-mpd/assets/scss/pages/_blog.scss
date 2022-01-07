@@ -1,0 +1,15 @@
+//--------------
+// Blog Styles
+//--------------
+
+// Blogroll
+.post-excerpt {
+  padding: 60px 30px 30px 30px;
+  text-align: center;
+}
+.excerpt-container {
+  padding: 30px;
+  h2 {
+    @include font-size(36px);
+  }
+}

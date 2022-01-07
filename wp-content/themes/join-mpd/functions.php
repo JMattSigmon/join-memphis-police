@@ -298,7 +298,7 @@ function mpd_excerpt($num)
     $limit = $num+1;
     $excerpt = explode(' ', get_the_excerpt(), $limit);
     array_pop($excerpt);
-    $excerpt = implode(" ", $excerpt).'...<a class="moretag" href="' .get_permalink($post->ID) . ' ">Read More <i class="fas fa-chevron-right"></i></a>';
+    $excerpt = implode(" ", $excerpt).'<br><a class="moretag btn btn-primary p-3 mt-3" href="' .get_permalink($post->ID) . ' ">Read More <i class="fas fa-chevron-right"></i></a>';
     echo '<p>';
     echo $excerpt;
     echo '</p>';
