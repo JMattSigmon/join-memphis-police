@@ -80,7 +80,7 @@ if (!function_exists('mpd_theme_title')) {
 
         // Add a page number if necessary.
         if ($paged >= 2 || $page >= 2) {
-            $title = "$title $sep " . sprintf(__('Page %s', $domain), max($paged, $page));
+            $title = "$title $sep " . sprintf(__('Page %s', 'mpd'), max($paged, $page));
         }
 
         return $title;
@@ -298,7 +298,7 @@ function mpd_excerpt($num)
     $limit = $num+1;
     $excerpt = explode(' ', get_the_excerpt(), $limit);
     array_pop($excerpt);
-    $excerpt = implode(" ", $excerpt).'<br><a class="moretag btn btn-primary p-3 mt-3" href="' .get_permalink($post->ID) . ' ">Read More <i class="fas fa-chevron-right"></i></a>';
+    $excerpt = implode(" ", $excerpt).'<br><a class="moretag btn btn-primary p-3 mt-3" href="' .get_permalink($post->ID) . ' ">Read More</a>';
     echo '<p>';
     echo $excerpt;
     echo '</p>';
@@ -327,7 +327,7 @@ function mpd_theme_pagination()
 {
     global $postslist;
     $big = 999999999;
-    echo '<div class="page-nav py-5">';
+    echo '<div class="page-nav py-5 container">';
     echo paginate_links(
         array(
             'base' => str_replace($big, '%#%', get_pagenum_link($big)),

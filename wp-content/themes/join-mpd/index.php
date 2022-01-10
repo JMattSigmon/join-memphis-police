@@ -42,7 +42,7 @@ if ($post_query->have_posts()) : while ($post_query->have_posts()) : $post_query
     echo '<section class="post-excerpt container">';
 
     // Thumbnail
-    echo '<div class="thumb-container me-3">';
+    echo '<div class="thumb-container mb-5">';
 
     // Thumbnail Logic
     if ($thumb) {
