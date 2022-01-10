@@ -51,3 +51,15 @@
     }
   }
 }
+
+// Post Content
+.post-content {
+  h2,
+  h4 {
+    color: $dkblue;
+  }
+  h3,
+  h5 {
+    color: $red;
+  }
+}
