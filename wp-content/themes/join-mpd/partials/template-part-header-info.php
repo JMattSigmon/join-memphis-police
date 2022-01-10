@@ -12,14 +12,14 @@
 
 ?>
 
-<div id="header-info-contain" class="container">
+<div id="header-info-contain" class="container-fluid">
 
     <?php
     
     $logo = get_field('site_logo', 'option');
     $logoR = get_field('site_logo_right', 'option');
 
-    if($logo) {
+    if ($logo) {
         echo '<div id="logo-right" class="d-none d-lg-block">';
         echo '<a href="' .esc_url(home_url('/')). '">';
         mpd_acf_svg_helper($logo);
@@ -29,7 +29,7 @@
 
     get_template_part('partials/template-part', 'desktop-nav'); // Desktop Navigation
 
-    if($logoR) {
+    if ($logoR) {
         echo '<div id="logo-right" class="d-none d-lg-block">';
         echo '<a href="' .esc_url(home_url('/')). '">';
         mpd_acf_svg_helper($logoR);

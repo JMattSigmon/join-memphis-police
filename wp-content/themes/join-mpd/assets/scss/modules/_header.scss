@@ -25,7 +25,7 @@ body {
   }
 }
 #header-info-contain {
-  @include flex-row(flex-start, space-between);
+  @include flex-row(flex-start, center);
   position: relative;
   z-index: 3;
   /* fix bug for drop down menu getting stuck behind the title container */
