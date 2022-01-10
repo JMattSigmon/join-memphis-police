@@ -46,11 +46,11 @@ if ($post_query->have_posts()) : while ($post_query->have_posts()) : $post_query
 
     // Thumbnail Logic
     if ($thumb) {
-        echo '<img src="' .$thumb. '">';
+        echo '<img src="' .$thumb. '" class="image-thumb">';
     } elseif ($acfThumb) {
         echo wp_get_attachment_image($acfThumb, $size);
     } elseif ($default) {
-        echo '<img src="' .$default. '">';
+        echo '<img src="' .$default. '" class="image-thumb">';
     }
 
     echo '</div>'; // .thumb-container

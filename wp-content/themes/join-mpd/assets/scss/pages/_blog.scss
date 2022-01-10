@@ -24,6 +24,10 @@
     @include letter-spacing(0.75px);
   }
 }
+.image-thumb {
+  max-width: 1024px;
+  width: 100%;
+}
 
 // Pagination
 .page-nav {
