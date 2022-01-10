@@ -35,3 +35,19 @@
     margin: 0 15px;
   }
 }
+
+// Single Blog Post
+.post-meta {
+  text-align: center;
+  * {
+    color: $wht;
+    @include font-size(16px);
+    text-transform: capitalize;
+  }
+  a {
+    &:hover {
+      color: $blue;
+      text-decoration: none;
+    }
+  }
+}
