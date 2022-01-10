@@ -27,7 +27,7 @@ $post_query = new WP_Query($args);
 if ($post_query->have_posts()) : while ($post_query->have_posts()) : $post_query->the_post();
 
     // Default thumbnail when none is set in Theme Options
-    $defaultOG = get_template_directory_uri() . '/assets/images/mas-logo-square-thumb.jpg';
+    $defaultOG = get_template_directory_uri() . '/assets/images/best-in-blue.png';
     $default = wp_normalize_path($defaultOG);
 
     // Thumnail size
