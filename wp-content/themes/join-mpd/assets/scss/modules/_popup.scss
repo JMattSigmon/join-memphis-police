@@ -27,10 +27,9 @@
       transition: $smooth;
       color: $blue;
     }
-    
   }
   .modal-header {
-    padding: 15px;
+    padding: 15px 10px;
     border: none;
     @include breakpoint(sm) {
       padding: 30px;
@@ -57,10 +56,12 @@
         }
       }
     }
+    /*
     a {
       color: $red;
       font-weight: 700;
     }
+    */
   }
   .modal-footer {
     border: none;
